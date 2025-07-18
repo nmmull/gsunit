@@ -1,23 +1,9 @@
 open Utils
 
 module Test_case = struct
-
   type status =
     | Passed
     | Failed
-
-  (* type 'a with_options = *)
-  (*   ?score:float -> *)
-  (*   ?max_score:float -> *)
-  (*   ?status:status -> *)
-  (*   ?name:string -> *)
-  (*   ?name_format:output_string_format -> *)
-  (*   ?number:string -> *)
-  (*   ?output:string -> *)
-  (*   ?output_format:output_string_format -> *)
-  (*   ?tags:string list -> *)
-  (*   ?visibility:visibility -> *)
-  (*   'a *)
 
   type t =
     {
