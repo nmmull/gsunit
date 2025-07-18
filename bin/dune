@@ -1,0 +1,4 @@
+(executable
+ (public_name gsunit)
+ (name main)
+ (libraries gsunit))
