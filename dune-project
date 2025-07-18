@@ -4,23 +4,15 @@
 
 (generate_opam_files true)
 
-(source
- (github username/reponame))
+(source (github nmmull/gsunit))
 
-(authors "Author Name")
+(authors "Nathan Mull")
 
-(maintainers "Maintainer Name")
-
-(license LICENSE)
-
-(documentation https://url/to/documentation)
+(maintainers "Nathan Mull")
 
 (package
  (name gsunit)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
- (tags
-  (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
+ (synopsis "Ocaml autograders")
+ (description "A library built on top of OUnit2 for writing Gradescope autograders to test OCaml code")
+ (depends ocaml dune ounit2)
+ (tags (topics gradescope autograders "unit tests")))
