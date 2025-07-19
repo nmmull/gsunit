@@ -25,7 +25,7 @@ let max_score_tests tests =
        | Some max_score -> go (num + 1, max_score +. acc) tests
   in go (0, 0.) tests
 
-let mk name ?max_score tests =
+let mk ?max_score name tests =
   let max_score =
     match max_score with
     | Some max_score ->

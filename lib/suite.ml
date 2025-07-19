@@ -1,5 +1,12 @@
 open Utils
 
+type 'a with_options =
+  ?output:formatted_string ->
+  ?visibility:Gradescope.visibility ->
+  ?stdout_visibility:Gradescope.visibility ->
+  ?extra_data:Yojson.Basic.t ->
+  'a
+
 module Meta = struct
   type t =
     {
@@ -47,13 +54,15 @@ let mk
   , tests
   )
 
-let output (m, _) = Meta.output m
-let output_str (m, _) = Meta.output_str m
-let output_format (m, _) = Meta.output_format m
-let visibility (m, _) = Meta.visibility m
-let stdout_visibility (m, _) = Meta.stdout_visibility m
-let extra_data (m, _) = Meta.extra_data m
+let meta (m, _) = m
 let groups (_, t) = t
+
+let output t = Meta.output (meta t)
+let output_str t = Meta.output_str (meta t)
+let output_format t = Meta.output_format (meta t)
+let visibility t = Meta.visibility (meta t)
+let stdout_visibility t = Meta.stdout_visibility (meta t)
+let extra_data t = Meta.extra_data (meta t)
 
 let to_ounit_test suite =
   suite
@@ -62,20 +71,20 @@ let to_ounit_test suite =
   |> OUnit2.(>:::) "Gradescope suite"
 
 let to_gradescope
-      ?(ounit_test_runner=default_ounit_test_runner)
+      ounit_results
       suite =
-  let result_list =
-    suite
-    |> to_ounit_test
-    |> ounit_test_runner
-    |> List.map (fun (path, result, _) -> List.rev path, result)
-  in
+  (* let result_list = *)
+  (*   suite *)
+  (*   |> to_ounit_test *)
+  (*   |> ounit_test_runner *)
+  (*   |> List.map (fun (path, result, _) -> List.rev path, result) *)
+  (* in *)
   let tests =
     List.concat
       (List.mapi
          (fun i g ->
            Group.to_gradescope
-             (Utils.results_by_index i result_list)
+             (Utils.results_by_index i ounit_results)
              g)
          (groups suite))
   in

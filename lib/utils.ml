@@ -1,6 +1,9 @@
+type ounit_results = (OUnitTest.node list * OUnitTest.result) list
+
 type test_results = (SubTest.Meta.t * OUnitTest.result) list
 
 type formatted_string = string * Gradescope.output_string_format
+
 type output_formatter = test_results -> formatted_string option
 
 let default_output_formatter _ = None

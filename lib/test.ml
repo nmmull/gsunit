@@ -65,7 +65,9 @@ end
 
 include Meta
 
-type t = Meta.t * SubTest.t list
+type 'a t = Meta.t * 'a
+type test = SubTest.test list t
+type result = SubTest.result list t
 
 let of_sub_tests
       ?max_score
@@ -120,24 +122,26 @@ let of_test_fun
   )
 
 let meta (m, _) = m
-let max_score (m, _) = Meta.max_score m
-let name (m, _) = Meta.name m
-let name_str (m, _) = Meta.name_str m
-let name_format (m, _) = Meta.name_format m
-let number (m, _) = Meta.number m
-let output_formatter (m, _) = Meta.output_formatter m
-let status_checker (m, _) = Meta.status_checker m
-let tags (m, _) = Meta.tags m
-let visibility (m, _) = Meta.visibility m
-let extra_data (m, _) = Meta.extra_data m
-let sub_tests (_, t) = t
+let value (_, a) = a
+(* let max_score (m, _) = Meta.max_score m *)
+(* let name (m, _) = Meta.name m *)
+(* let name_str (m, _) = Meta.name_str m *)
+(* let name_format (m, _) = Meta.name_format m *)
+(* let number (m, _) = Meta.number m *)
+(* let output_formatter (m, _) = Meta.output_formatter m *)
+(* let status_checker (m, _) = Meta.status_checker m *)
+(* let tags (m, _) = Meta.tags m *)
+(* let visibility (m, _) = Meta.visibility m *)
+(* let extra_data (m, _) = Meta.extra_data m *)
+(* let sub_tests (_, t) = t *)
 
 let to_ounit_test t =
   let open OUnit2 in
-  t
+  let meta = meta t in
+  meta
   |> sub_tests
   |> List.map SubTest.to_ounit_test
-  |> (>:::) (name_str t)
+  |> (>:::) (name_str meta)
 
 let to_gradescope
       ?group_name

@@ -14,14 +14,10 @@ module Meta : sig
   val hidden : t -> bool
 end
 
-type t
+type 'a t
+type test = OUnitTest.test_fun t
+type result = OUnitTest.result t
 
-val mk: (string -> OUnitTest.test_fun -> t) with_options
-val meta : t -> Meta.t
-val name : t -> string
-val hint : t -> string option
-val length : t -> float
-val hidden : t -> bool
-val test_fun : t -> OUnitTest.test_fun
-
-val to_ounit_test : t -> OUnitTest.test
+val mk: (string -> 'a -> 'a t) with_options
+val meta : 'a t -> Meta.t
+val to_ounit_test : test -> OUnitTest.test
