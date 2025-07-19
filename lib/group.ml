@@ -64,19 +64,18 @@ let max_score_remainder t =
   (max_score (meta t) -. max_score_given t)
   /. float_of_int (num_remainder t)
 
-let to_ounit_test group =
-  group
+let to_ounit_test tgroup =
+  tgroup
   |> value
   |> List.map Test.to_ounit_test
-  |> OUnit2.(>:::) (group |> meta |> name)
+  |> OUnit2.(>:::) (tgroup |> meta |> name)
 
-let to_gradescope group_results =
-  let group_name = group_results |> meta |> name in
-  let default_max_score = max_score_remainder group_results in
-  let test_results = value (group_results) in
-  (List.map
-     (Test.to_gradescope group_name default_max_score)
-     test_results
+let to_gradescope rgroup =
+  let name = rgroup |> meta |> name in
+  let default_max_score = max_score_remainder rgroup in
+  rgroup
+  |> value
+  |> List.map (Test.to_gradescope name default_max_score)
 
   (* List.mapi *)
   (*   (fun i test -> *)

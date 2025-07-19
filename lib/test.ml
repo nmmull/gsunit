@@ -139,10 +139,7 @@ let num_passed (t : result) =
     0
     (value t)
 
-let to_gradescope
-      group_name
-      default_max_score
-      (t : result) =
+let to_gradescope group_name default_max_score t =
   let max_score =
     Option.value
       (t |> meta |> max_score)
@@ -157,16 +154,6 @@ let to_gradescope
       *. float_of_int (num_passed t)
       /. float_of_int num_sub_tests
   in
-  let output_format =
-    match t |> meta |> output_format with
-    | Some `Text -> None
-    | f -> f
-  in
-  let visibility =
-    match t |> meta |> visibility with
-    | `Visible -> None
-    | v -> Some v
-  in
   let name =
     let name_str = t |> meta |> name_str in
     if num_sub_tests t = 1
@@ -174,21 +161,16 @@ let to_gradescope
     then "[" ^ group_name ^ "] " ^ name_str
     else name_str
   in
-  let name_format =
-    match t |> meta |> name_format with
-    | `Text -> None
-    | f -> Some f
-  in
   Gradescope.Test.mk
-    ?output_format
-    ?visibility
-    ?name_format
+    ?visibility:(t |> meta |> visibility |> opt_of_visibility)
     ?status:(t |> meta |> status)
     ?output:(t |> meta |> output_str)
+    ?output_format:Option.(t |> meta |> output_format |> map opt_of_format |> join)
     ?tags:(t |> meta |> tags)
     ?extra_data:(t |> meta |> extra_data)
     ?number:(t |> meta |> number)
-    ~name
+    ?name_format:(t |> meta |> name_format |> opt_of_format)
     ~max_score
     ~score
+    ~name
     ()

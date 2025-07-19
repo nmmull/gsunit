@@ -36,3 +36,7 @@ let results_by_index i =
 let opt_of_visibility = function
   | `Visible -> None
   | v -> Some v
+
+let opt_of_format = function
+  | `Text -> None
+  | f -> Some f

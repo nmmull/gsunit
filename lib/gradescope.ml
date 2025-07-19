@@ -154,18 +154,18 @@ module Suite = struct
                 (List.map Test.score tests) ->
        raise MissingTestScore
     | _ ->
-       Ok {
-           score;
-           execution_time;
-           output;
-           output_format;
-           test_output_format;
-           test_name_format;
-           visibility;
-           stdout_visibility;
-           tests;
-           extra_data;
-         }
+        {
+          score;
+          execution_time;
+          output;
+          output_format;
+          test_output_format;
+          test_name_format;
+          visibility;
+          stdout_visibility;
+          tests;
+          extra_data;
+        }
 
   let score t = t.score
   let execution_time t = t.execution_time

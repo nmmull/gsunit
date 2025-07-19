@@ -74,7 +74,8 @@ let to_gradescope suite =
     ?visibility:(suite |> meta |> visibility |> opt_of_visibility)
     ?stdout_visibility:(suite |> meta |> stdout_visibility |> opt_of_visibility)
     ?extra_data:(suite |> meta |> extra_data)
-    ~tests:(suite |> value |> List.concat_map Group.to_gradescope
+    ~tests:(suite |> value |> List.concat_map Group.to_gradescope)
+    ()
 
   (* let result_list = *)
   (*   suite *)
