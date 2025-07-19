@@ -26,7 +26,11 @@ module Meta = struct
   let hidden m = m.hidden
 end
 
+include Meta
+
 type 'a t = Meta.t * 'a
+type test = OUnitTest.test_fun t
+type result = OUnitTest.result t
 
 let mk
       ?hint
@@ -34,7 +38,7 @@ let mk
       ?hidden
       name
       a =
-  ( Meta.mk
+  ( mk
       ?hint
       ?length
       ?hidden
@@ -47,8 +51,6 @@ let value (_, a) = a
 
 let to_ounit_test t =
   let open OUnit2 in
-  let open Meta in
-  let meta = meta t in
-  let length = OUnitTest.Custom_length (length meta) in
+  let length = OUnitTest.Custom_length (t |> meta |> length) in
   let test_case = test_case ~length (value t) in
-  (name meta) >: test_case
+  (t |> meta |> name) >: test_case

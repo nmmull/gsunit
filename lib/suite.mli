@@ -20,18 +20,21 @@ module Meta : sig
   val extra_data : t -> Yojson.Basic.t option
 end
 
-type t
+val output : Meta.t -> formatted_string option
+val output_str : Meta.t -> string option
+val output_format : Meta.t -> Gradescope.output_string_format option
+val visibility : Meta.t -> Gradescope.visibility
+val stdout_visibility : Meta.t -> Gradescope.visibility
+val extra_data : Meta.t -> Yojson.Basic.t option
 
-val mk : (Group.t list -> t) with_options
+type 'a t
+type test = Group.test list t
+type result = Group.result list t
 
-val meta : t -> Meta.t
-val groups : t -> Group.t list
+val mk : ('a -> 'a t) with_options
 
-val output : t -> formatted_string option
-val output_str : t -> string option
-val output_format : t -> Gradescope.output_string_format option
-val visibility : t -> Gradescope.visibility
-val stdout_visibility : t -> Gradescope.visibility
-val extra_data : t -> Yojson.Basic.t option
+val meta : 'a t -> Meta.t
+val value : 'a t -> 'a
 
-val to_ounit_test : t -> OUnitTest.test
+val to_ounit_test : test -> OUnitTest.test
+val to_gradescope : result -> Gradescope.Suite.t

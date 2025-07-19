@@ -1,9 +1,7 @@
-open Utils
-
 exception MissingTestMaxScore
 exception InvalidGroupMaxScore
 
-module Meta :sig
+module Meta : sig
   type t
 
   val mk : string -> float -> t
@@ -11,15 +9,16 @@ module Meta :sig
   val max_score : t -> float
 end
 
-type t
+type 'a t
+type test = Test.test list t
+type result = Test.result list t
 
-val mk : ?max_score:float -> string -> Test.t list -> t
+val mk : string -> float -> 'a -> 'a t
 
-val meta : t -> Meta.t
-val test : t -> Test.t list
+val of_tests : ?max_score:float -> string -> Test.test list -> test
 
-val name : t -> string
-val max_score : t -> float
+val meta : 'a t -> Meta.t
+val value : 'a t -> 'a
 
-val to_ounit_test : t -> OUnitTest.test
-val to_gradescope : ounit_results -> t -> Gradescope.Test.t list
+val to_ounit_test : test -> OUnitTest.test
+val to_gradescope : result -> Gradescope.Test.t list

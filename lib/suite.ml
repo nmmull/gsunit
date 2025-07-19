@@ -37,49 +37,52 @@ module Meta = struct
   let extra_data m = m.extra_data
 end
 
-type t = Meta.t * Group.t list
+include Meta
+
+type 'a t = Meta.t * 'a
+type test = Group.test list t
+type result = Group.result list t
 
 let mk
       ?output
       ?visibility
       ?stdout_visibility
       ?extra_data
-      tests =
-  ( Meta.mk
+      a =
+  ( mk
       ?output
       ?visibility
       ?stdout_visibility
       ?extra_data
       ()
-  , tests
+  , a
   )
 
 let meta (m, _) = m
-let groups (_, t) = t
-
-let output t = Meta.output (meta t)
-let output_str t = Meta.output_str (meta t)
-let output_format t = Meta.output_format (meta t)
-let visibility t = Meta.visibility (meta t)
-let stdout_visibility t = Meta.stdout_visibility (meta t)
-let extra_data t = Meta.extra_data (meta t)
+let value (_, t) = t
 
 let to_ounit_test suite =
   suite
-  |> groups
+  |> value
   |> List.map Group.to_ounit_test
   |> OUnit2.(>:::) "Gradescope suite"
 
-let to_gradescope
-      ounit_results
-      suite =
+let to_gradescope suite =
+  Gradescope.Suite.mk
+    ?output:(suite |> meta |> output_str)
+    ?output_format:(suite |> meta |> output_format)
+    ?visibility:(suite |> meta |> visibility |> opt_of_visibility)
+    ?stdout_visibility:(suite |> meta |> stdout_visibility |> opt_of_visibility)
+    ?extra_data:(suite |> meta |> extra_data)
+    ~tests:(suite |> value |> List.concat_map Group.to_gradescope
+
   (* let result_list = *)
   (*   suite *)
   (*   |> to_ounit_test *)
   (*   |> ounit_test_runner *)
   (*   |> List.map (fun (path, result, _) -> List.rev path, result) *)
   (* in *)
-  let tests =
+  (* let tests =
     List.concat
       (List.mapi
          (fun i g ->
@@ -105,3 +108,4 @@ let to_gradescope
     ?stdout_visibility
     ?extra_data:(extra_data suite)
     ~tests
+   *)

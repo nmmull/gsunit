@@ -4,17 +4,17 @@ type test_results = (SubTest.Meta.t * OUnitTest.result) list
 
 type formatted_string = string * Gradescope.output_string_format
 
-type output_formatter = test_results -> formatted_string option
+(* type output_formatter = Test.result -> formatted_string option *)
 
-let default_output_formatter _ = None
+(* let default_output_formatter _ = None *)
 let text s = (s, `Text)
 let html s = (s, `Html)
 let simple_format s = (s, `Simple_format)
 let md s = (s, `Md)
 let ansi s = (s, `Ansi)
 
-type status_checker = test_results -> Gradescope.status option
-let default_status_checker _ = None
+(* type status_checker = Test.result -> Gradescope.status option *)
+(* let default_status_checker _ = None *)
 
 type ounit_test_runner = OUnitTest.(test -> result_list)
 
@@ -32,3 +32,7 @@ let results_by_index i =
       | OUnitTest.Label _ :: OUnitTest.ListItem j :: path when i = j -> (path, result) :: acc
       | _ -> acc)
     []
+
+let opt_of_visibility = function
+  | `Visible -> None
+  | v -> Some v
