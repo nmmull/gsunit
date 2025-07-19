@@ -4,20 +4,21 @@ type 'a with_options =
   ?hidden:bool ->
   'a
 
-module Meta : sig
+module type META = sig
   type t
-
-  val mk : (string -> t) with_options
   val name : t -> string
   val hint : t -> string option
   val length : t -> float
   val hidden : t -> bool
 end
 
-val name : Meta.t -> string
-val hint : Meta.t -> string option
-val length : Meta.t -> float
-val hidden : Meta.t -> bool
+module Meta : sig
+  type t
+  val mk : (string -> t) with_options
+  include META with type t := t
+end
+
+include META with type t := Meta.t
 
 type 'a t
 type test = OUnitTest.test_fun t

@@ -4,6 +4,14 @@ type 'a with_options =
   ?hidden:bool ->
   'a
 
+module type META = sig
+  type t
+  val name : t -> string
+  val hint : t -> string option
+  val length : t -> float
+  val hidden : t -> bool
+end
+
 module Meta = struct
   type t =
     {
@@ -26,7 +34,7 @@ module Meta = struct
   let hidden m = m.hidden
 end
 
-include Meta
+include (Meta : META with type t := Meta.t)
 
 type 'a t = Meta.t * 'a
 type test = OUnitTest.test_fun t
@@ -38,7 +46,7 @@ let mk
       ?hidden
       name
       a =
-  ( mk
+  ( Meta.mk
       ?hint
       ?length
       ?hidden

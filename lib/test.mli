@@ -12,10 +12,8 @@ type 'a with_options =
   ?extra_data: Yojson.Basic.t ->
   'a
 
-module Meta : sig
+module type META = sig
   type t
-  val mk : (Utils.formatted_string -> t) with_options
-
   val max_score : t -> float option
   val name : t -> formatted_string
   val name_str : t -> string
@@ -28,20 +26,17 @@ module Meta : sig
   val tags : t -> string list option
   val visibility : t -> Gradescope.visibility
   val extra_data : t -> Yojson.Basic.t option
+  val hint : t -> string option
+  val hidden : t -> bool
 end
 
-val max_score : Meta.t -> float option
-val name : Meta.t -> formatted_string
-val name_str : Meta.t -> string
-val name_format : Meta.t -> Gradescope.output_string_format
-val number : Meta.t -> string option
-val output : Meta.t -> formatted_string option
-val output_str : Meta.t -> string option
-val output_format : Meta.t -> Gradescope.output_string_format option
-val status : Meta.t -> Gradescope.status option
-val tags : Meta.t -> string list option
-val visibility : Meta.t -> Gradescope.visibility
-val extra_data : Meta.t -> Yojson.Basic.t option
+module Meta : sig
+  type t
+  val mk : (Utils.formatted_string -> t) with_options
+  include META with type t := t
+end
+
+include META with type t := Meta.t
 
 type 'a t
 type test = SubTest.test list t

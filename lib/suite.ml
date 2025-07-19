@@ -7,6 +7,16 @@ type 'a with_options =
   ?extra_data:Yojson.Basic.t ->
   'a
 
+module type META = sig
+  type t
+  val output : t -> formatted_string option
+  val output_str : t -> string option
+  val output_format : t -> Gradescope.output_string_format option
+  val visibility : t -> Gradescope.visibility
+  val stdout_visibility : t -> Gradescope.visibility
+  val extra_data : t -> Yojson.Basic.t option
+end
+
 module Meta = struct
   type t =
     {
@@ -37,7 +47,7 @@ module Meta = struct
   let extra_data m = m.extra_data
 end
 
-include Meta
+include (Meta : META with type t := Meta.t)
 
 type 'a t = Meta.t * 'a
 type test = Group.test list t
@@ -49,7 +59,7 @@ let mk
       ?stdout_visibility
       ?extra_data
       a =
-  ( mk
+  ( Meta.mk
       ?output
       ?visibility
       ?stdout_visibility

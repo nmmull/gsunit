@@ -12,6 +12,24 @@ type 'a with_options =
   ?extra_data: Yojson.Basic.t ->
   'a
 
+module type META = sig
+  type t
+  val max_score : t -> float option
+  val name : t -> formatted_string
+  val name_str : t -> string
+  val name_format : t -> Gradescope.output_string_format
+  val number : t -> string option
+  val output : t -> formatted_string option
+  val output_str : t -> string option
+  val output_format : t -> Gradescope.output_string_format option
+  val status : t -> Gradescope.status option
+  val tags : t -> string list option
+  val visibility : t -> Gradescope.visibility
+  val extra_data : t -> Yojson.Basic.t option
+  val hint : t -> string option
+  val hidden : t -> bool
+end
+
 module Meta = struct
   type t =
     {
@@ -63,9 +81,11 @@ module Meta = struct
   let tags t = t.tags
   let visibility t = t.visibility
   let extra_data t = t.extra_data
+  let hint t = t.hint
+  let hidden t = t.hidden
 end
 
-include Meta
+include (Meta : META with type t := Meta.t)
 
 type 'a t = Meta.t * 'a
 type test = SubTest.test list t
@@ -83,7 +103,7 @@ let mk
       ?extra_data
       name
       a =
-  ( mk
+  ( Meta.mk
       ?hidden
       ?max_score
       ?hint

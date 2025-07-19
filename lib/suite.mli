@@ -7,11 +7,8 @@ type 'a with_options =
   ?extra_data:Yojson.Basic.t ->
   'a
 
-module Meta : sig
+module type META = sig
   type t
-
-  val mk : (unit -> t) with_options
-
   val output : t -> formatted_string option
   val output_str : t -> string option
   val output_format : t -> Gradescope.output_string_format option
@@ -20,12 +17,13 @@ module Meta : sig
   val extra_data : t -> Yojson.Basic.t option
 end
 
-val output : Meta.t -> formatted_string option
-val output_str : Meta.t -> string option
-val output_format : Meta.t -> Gradescope.output_string_format option
-val visibility : Meta.t -> Gradescope.visibility
-val stdout_visibility : Meta.t -> Gradescope.visibility
-val extra_data : Meta.t -> Yojson.Basic.t option
+module Meta : sig
+  type t
+  val mk : (unit -> t) with_options
+  include META with type t := t
+end
+
+include META with type t := Meta.t
 
 type 'a t
 type test = Group.test list t

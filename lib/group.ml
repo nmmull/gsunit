@@ -1,6 +1,12 @@
 exception MissingTestMaxScore
 exception InvalidGroupMaxScore
 
+module type META = sig
+  type t
+  val name: t -> string
+  val max_score : t -> float
+end
+
 module Meta = struct
   type t =
     {
@@ -14,7 +20,7 @@ module Meta = struct
   let max_score m = m.max_score
 end
 
-include Meta
+include (Meta : META with type t := Meta.t)
 
 type 'a t = Meta.t * 'a
 type test = Test.test list t
@@ -30,7 +36,7 @@ let max_score_tests tests =
   in go (0, 0.) tests
 
 let mk name max_score a =
-  (mk name max_score, a)
+  (Meta.mk name max_score, a)
 
 let of_tests ?max_score name tests =
   let max_score =
