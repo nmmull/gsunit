@@ -14,5 +14,5 @@
  (name gsunit)
  (synopsis "Ocaml autograders")
  (description "A library built on top of OUnit2 for writing Gradescope autograders to test OCaml code")
- (depends ocaml dune ounit2)
+ (depends ocaml dune ounit2 yojson)
  (tags (topics gradescope autograders "unit tests")))
