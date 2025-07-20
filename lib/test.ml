@@ -5,7 +5,7 @@ type 'a with_options =
   ?hint:string ->
   ?hidden:bool ->
   ?number:string ->
-  ?output: formatted_string ->
+  ?output: Formatted_string.t ->
   ?status: Gradescope.status ->
   ?visibility:Gradescope.visibility ->
   ?tags:string list ->
@@ -15,11 +15,11 @@ type 'a with_options =
 module type META = sig
   type t
   val max_score : t -> float option
-  val name : t -> formatted_string
+  val name : t -> Formatted_string.t
   val name_str : t -> string
   val name_format : t -> Gradescope.output_string_format
   val number : t -> string option
-  val output : t -> formatted_string option
+  val output : t -> Formatted_string.t option
   val output_str : t -> string option
   val output_format : t -> Gradescope.output_string_format option
   val status : t -> Gradescope.status option
@@ -34,11 +34,11 @@ module Meta = struct
   type t =
     {
       max_score: float option;
-      name: formatted_string;
+      name: Formatted_string.t;
       hint: string option;
       hidden: bool;
       number: string option;
-      output: formatted_string option;
+      output: Formatted_string.t option;
       status: Gradescope.status option;
       visibility: Gradescope.visibility;
       tags: string list option;
@@ -194,3 +194,5 @@ let to_gradescope group_name default_max_score t =
     ~score
     ~name
     ()
+
+let test_to_result _ _ = assert false

@@ -1,3 +1,5 @@
+open Utils
+
 type output_string_format =
   [ `Text
   | `Html
@@ -6,21 +8,10 @@ type output_string_format =
   | `Ansi
   ]
 
-let json_of_format = function
-  | `Text -> `String "text"
-  | `Html -> `String "html"
-  | `Simple_format -> `String "simple_format"
-  | `Md -> `String "md"
-  | `Ansi -> `String "ansi"
-
 type status =
   [ `Passed
   | `Failed
   ]
-
-let json_of_status = function
-  | `Passed -> `String "passed"
-  | `Failed -> `String "failed"
 
 type visibility =
   [ `Hidden
@@ -28,17 +19,6 @@ type visibility =
   | `After_published
   | `Visible
   ]
-
-let json_of_visibility = function
-  | `Hidden -> `String "hidden"
-  | `After_due_date -> `String "after_due_date"
-  | `After_published -> `String "after_published"
-  | `Visible -> `String "visible"
-
-let json_of_float f = `Float f
-let json_of_int n = `Int n
-let json_of_string s = `String s
-let json_of_tags t = `List (List.map json_of_string t)
 
 module Test = struct
 

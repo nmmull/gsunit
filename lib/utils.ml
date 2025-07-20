@@ -1,21 +1,5 @@
 type ounit_results = (OUnitTest.node list * OUnitTest.result) list
 
-type test_results = (SubTest.Meta.t * OUnitTest.result) list
-
-type formatted_string = string * Gradescope.output_string_format
-
-(* type output_formatter = Test.result -> formatted_string option *)
-
-(* let default_output_formatter _ = None *)
-let text s = (s, `Text)
-let html s = (s, `Html)
-let simple_format s = (s, `Simple_format)
-let md s = (s, `Md)
-let ansi s = (s, `Ansi)
-
-(* type status_checker = Test.result -> Gradescope.status option *)
-(* let default_status_checker _ = None *)
-
 type ounit_test_runner = OUnitTest.(test -> result_list)
 
 let default_ounit_test_runner : ounit_test_runner =
@@ -40,3 +24,25 @@ let opt_of_visibility = function
 let opt_of_format = function
   | `Text -> None
   | f -> Some f
+
+let json_of_format = function
+  | `Text -> `String "text"
+  | `Html -> `String "html"
+  | `Simple_format -> `String "simple_format"
+  | `Md -> `String "md"
+  | `Ansi -> `String "ansi"
+
+let json_of_status = function
+  | `Passed -> `String "passed"
+  | `Failed -> `String "failed"
+
+let json_of_visibility = function
+  | `Hidden -> `String "hidden"
+  | `After_due_date -> `String "after_due_date"
+  | `After_published -> `String "after_published"
+  | `Visible -> `String "visible"
+
+let json_of_float f = `Float f
+let json_of_int n = `Int n
+let json_of_string s = `String s
+let json_of_tags t = `List (List.map json_of_string t)

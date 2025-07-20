@@ -5,7 +5,7 @@ type 'a with_options =
   ?hint:string ->
   ?hidden:bool ->
   ?number:string ->
-  ?output:formatted_string ->
+  ?output:Formatted_string.t ->
   ?status:Gradescope.status ->
   ?visibility:Gradescope.visibility ->
   ?tags:string list ->
@@ -15,11 +15,11 @@ type 'a with_options =
 module type META = sig
   type t
   val max_score : t -> float option
-  val name : t -> formatted_string
+  val name : t -> Formatted_string.t
   val name_str : t -> string
   val name_format : t -> Gradescope.output_string_format
   val number : t -> string option
-  val output : t -> formatted_string option
+  val output : t -> Formatted_string.t option
   val output_str : t -> string option
   val output_format : t -> Gradescope.output_string_format option
   val status : t -> Gradescope.status option
@@ -32,7 +32,7 @@ end
 
 module Meta : sig
   type t
-  val mk : (Utils.formatted_string -> t) with_options
+  val mk : (Formatted_string.t -> t) with_options
   include META with type t := t
 end
 
@@ -42,11 +42,13 @@ type 'a t
 type test = SubTest.test list t
 type result = SubTest.result list t
 
-val mk : (formatted_string -> 'a -> 'a t) with_options
-val of_test_fun : (formatted_string -> OUnitTest.test_fun -> test) with_options
+val mk : (Formatted_string.t -> 'a -> 'a t) with_options
+val of_test_fun : (Formatted_string.t -> OUnitTest.test_fun -> test) with_options
 
 val meta : 'a t -> Meta.t
 val value : 'a t -> 'a
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : string -> float -> result -> Gradescope.Test.t
+
+val test_to_result : ounit_results -> test -> result
