@@ -70,6 +70,7 @@ let mk
 
 let meta (m, _) = m
 let value (_, t) = t
+let map f (m, a) = (m, f a)
 
 let to_ounit_test suite =
   suite
@@ -78,7 +79,7 @@ let to_ounit_test suite =
   |> OUnit2.(>:::) "Gradescope suite"
 
 let to_gradescope suite =
-  Gradescope.Suite.mk
+  Gradescope.mk
     ?output:(suite |> meta |> output_str)
     ?output_format:(suite |> meta |> output_format)
     ?visibility:(suite |> meta |> visibility |> opt_of_visibility)
@@ -87,36 +88,9 @@ let to_gradescope suite =
     ~tests:(suite |> value |> List.concat_map Group.to_gradescope)
     ()
 
-  (* let result_list = *)
-  (*   suite *)
-  (*   |> to_ounit_test *)
-  (*   |> ounit_test_runner *)
-  (*   |> List.map (fun (path, result, _) -> List.rev path, result) *)
-  (* in *)
-  (* let tests =
-    List.concat
-      (List.mapi
-         (fun i g ->
-           Group.to_gradescope
-             (Utils.results_by_index i ounit_results)
-             g)
-         (groups suite))
-  in
-  let visibility =
-    match visibility suite with
-    | `Visible -> None
-    | v -> Some v
-  in
-  let stdout_visibility =
-    match stdout_visibility suite with
-    | `Visible -> None
-    | v -> Some v
-  in
-  Gradescope.Suite.mk
-    ?output:(output_str suite)
-    ?output_format:(output_format suite)
-    ?visibility
-    ?stdout_visibility
-    ?extra_data:(extra_data suite)
-    ~tests
-   *)
+let test_to_result ounit_results =
+  map
+    (List.mapi
+       (fun i ->
+         (Group.test_to_result
+            (results_by_index i ounit_results))))

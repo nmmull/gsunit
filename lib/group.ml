@@ -1,3 +1,5 @@
+open Utils
+
 exception MissingTestMaxScore
 exception InvalidGroupMaxScore
 
@@ -61,6 +63,7 @@ let of_tests ?max_score name tests =
 
 let meta (m, _) = m
 let value (_, a) = a
+let map f (m, a)  = (m, f a)
 
 let num_tests t = List.length (value t)
 let num_max_score_given t = fst (max_score_tests (value t))
@@ -82,6 +85,13 @@ let to_gradescope rgroup =
   rgroup
   |> value
   |> List.map (Test.to_gradescope name default_max_score)
+
+let test_to_result ounit_results =
+  map
+    (List.mapi
+       (fun i ->
+         Test.test_to_result
+           (results_by_index i ounit_results)))
 
   (* List.mapi *)
   (*   (fun i test -> *)

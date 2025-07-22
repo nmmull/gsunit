@@ -38,7 +38,7 @@ include (Meta : META with type t := Meta.t)
 
 type 'a t = Meta.t * 'a
 type test = OUnitTest.test_fun t
-type result = OUnitTest.result t
+type result = [`Passed | `Failed] t
 
 let mk
       ?hint
@@ -56,6 +56,7 @@ let mk
 
 let meta (m, _) = m
 let value (_, a) = a
+let map f (m, a) = (m, f a)
 
 let to_ounit_test t =
   let open OUnit2 in

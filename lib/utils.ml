@@ -1,4 +1,6 @@
-type ounit_results = (OUnitTest.node list * OUnitTest.result) list
+(* type ounit_results = (OUnitTest.node list * OUnitTest.result) list *)
+
+type ounit_results = (int list * [ `Passed | `Failed ]) list
 
 type ounit_test_runner = OUnitTest.(test -> result_list)
 
@@ -9,11 +11,28 @@ let default_ounit_test_runner : ounit_test_runner =
   let chooser = snd (OUnitChooser.choice conf) in
   OUnitCore.run_test_tt conf logger runner chooser
 
+let reformat_ounit_results results =
+  let reformat_path =
+    let rec go acc = function
+      | [] -> List.rev acc
+      | OUnitTest.ListItem i :: path -> go (i :: acc) path
+      | _ :: path -> go acc path
+    in go []
+  in
+  let reformat_result = function
+    | OUnitTest.RSuccess -> `Passed
+    | _ -> `Failed
+  in
+  List.map
+    (fun (path, result, _) ->
+      reformat_path path, reformat_result result)
+    results
+
 let results_by_index i =
   List.fold_left
     (fun acc (path, result) ->
       match path with
-      | OUnitTest.Label _ :: OUnitTest.ListItem j :: path when i = j -> (path, result) :: acc
+      | j :: path when i = j -> (path, result) :: acc
       | _ -> acc)
     []
 

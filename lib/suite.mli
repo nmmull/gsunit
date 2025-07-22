@@ -1,3 +1,5 @@
+open Utils
+
 type 'a with_options =
   ?output:Formatted_string.t ->
   ?visibility:Gradescope.visibility ->
@@ -31,6 +33,9 @@ val mk : ('a -> 'a t) with_options
 
 val meta : 'a t -> Meta.t
 val value : 'a t -> 'a
+val map : ('a -> 'b) -> 'a t -> 'b t
 
 val to_ounit_test : test -> OUnitTest.test
-val to_gradescope : result -> Gradescope.Suite.t
+val to_gradescope : result -> Gradescope.t
+
+val test_to_result : ounit_results -> test -> result

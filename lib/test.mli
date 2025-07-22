@@ -47,6 +47,7 @@ val of_test_fun : (Formatted_string.t -> OUnitTest.test_fun -> test) with_option
 
 val meta : 'a t -> Meta.t
 val value : 'a t -> 'a
+val map : ('a -> 'b) -> 'a t -> 'b t
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : string -> float -> result -> Gradescope.Test.t

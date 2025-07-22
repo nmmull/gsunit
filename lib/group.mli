@@ -1,3 +1,5 @@
+open Utils
+
 exception MissingTestMaxScore
 exception InvalidGroupMaxScore
 
@@ -24,6 +26,9 @@ val of_tests : ?max_score:float -> string -> Test.test list -> test
 
 val meta : 'a t -> Meta.t
 val value : 'a t -> 'a
+val map : ('a -> 'b) -> 'a t -> 'b t
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : result -> Gradescope.Test.t list
+
+val test_to_result : ounit_results -> test -> result

@@ -144,6 +144,7 @@ let of_test_fun
 
 let meta (m, _) = m
 let value (_, a) = a
+let map f (m, a) = (m, f a)
 
 let to_ounit_test t =
   let open OUnit2 in
@@ -155,7 +156,7 @@ let to_ounit_test t =
 let num_sub_tests t  = List.length (value t)
 let num_passed (t : result) =
   List.fold_left
-    (fun acc r -> acc + (if (SubTest.value r) = OUnitTest.RSuccess then 1 else 0))
+    (fun acc r -> acc + (if (SubTest.value r) = `Passed then 1 else 0))
     0
     (value t)
 
@@ -195,4 +196,10 @@ let to_gradescope group_name default_max_score t =
     ~name
     ()
 
-let test_to_result _ _ = assert false
+let test_to_result ounit_results =
+  map
+    (List.mapi
+       (fun i ->
+         SubTest.map
+           (fun _ ->
+             List.assoc [i] ounit_results)))
