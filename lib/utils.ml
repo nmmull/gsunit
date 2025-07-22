@@ -2,7 +2,8 @@ type ounit_results = (int list * [ `Passed | `Failed ]) list
 
 type ounit_test_runner = OUnitTest.(test -> result_list)
 
-let default_ounit_test_runner : ounit_test_runner =
+let default_ounit_test_runner : unit -> ounit_test_runner =
+  fun () ->
   let conf = !OUnitCore.run_test_tt_main_conf [] in
   let logger = OUnitLogger.null_logger in
   let runner = snd (OUnitRunner.choice conf) in

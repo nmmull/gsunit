@@ -28,7 +28,7 @@ let run
     let ounit_results =
       suite
       |> Suite.to_ounit_test
-      |> ounit_test_runner
+      |> ounit_test_runner ()
       |> reformat_ounit_results
     in
     let gradescope_results =
