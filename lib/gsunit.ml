@@ -6,7 +6,6 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
-
 let run
       ?(debug=false)
       ?(ounit_test_runner=default_ounit_test_runner)
