@@ -6,6 +6,8 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
+include Utils
+
 let run
       ?(debug=false)
       ?(ounit_test_runner=default_ounit_test_runner)
@@ -14,7 +16,6 @@ let run
       ?stdout_visibility
       ?extra_data
       suite =
-  (* let open Suite in *)
   let suite =
     Suite.mk
       ?output
