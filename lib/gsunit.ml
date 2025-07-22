@@ -5,6 +5,8 @@ module Group = Group
 module Test = Test
 module SubTest = SubTest
 
+include Formatted_string
+
 let run
       ?(debug=false)
       ?(ounit_test_runner=default_ounit_test_runner)
