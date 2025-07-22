@@ -8,16 +8,12 @@ module Meta : sig
 end
 
 include META with type t := Meta.t
+include WITH_META with type meta := Meta.t
 
-type 'a t
 type test = Group.test list t
 type result = Group.result list t
 
-val mk : ('a -> 'a t) with_options
-
-val meta : 'a t -> Meta.t
-val value : 'a t -> 'a
-val map : ('a -> 'b) -> 'a t -> 'b t
+val mk : (Group.test list -> test) with_options
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : result -> Gradescope.Suite.t

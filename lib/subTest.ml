@@ -1,4 +1,5 @@
 include SubTest_intf
+open Utils
 
 module Meta = struct
   type t =
@@ -23,28 +24,22 @@ module Meta = struct
 end
 
 include (Meta : META with type t := Meta.t)
-
-type 'a t = Meta.t * 'a
-type test = OUnitTest.test_fun t
-type result = [`Passed | `Failed] t
+include With_meta (Meta)
 
 let mk
       ?hint
       ?length
       ?hidden
-      name
-      a =
-  ( Meta.mk
-      ?hint
-      ?length
-      ?hidden
-      name
-  , a
-  )
+      name =
+  mk (Meta.mk
+        ?hint
+        ?length
+        ?hidden
+        name)
 
-let meta (m, _) = m
-let value (_, a) = a
-let map f (m, a) = (m, f a)
+type case = OUnitTest.test_fun
+type test = case t
+type result = [ `Passed | `Failed ] t
 
 let to_ounit_test t =
   let open OUnit2 in

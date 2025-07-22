@@ -3,22 +3,21 @@ open Utils
 
 module Meta : sig
   type t
-  val mk : (Formatted_string.t -> t) with_options
+  val mk : (formatted_string -> t) with_options
   include META with type t := t
 end
 
 include META with type t := Meta.t
+include WITH_META with type meta := Meta.t
 
-type 'a t
+type case =
+  [ `Single of OUnitTest.test_fun
+  | `Multi of SubTest.test list
+  ]
 type test = SubTest.test list t
 type result = SubTest.result list t
 
-val mk : (Formatted_string.t -> 'a -> 'a t) with_options
-val of_test_fun : (Formatted_string.t -> OUnitTest.test_fun -> test) with_options
-
-val meta : 'a t -> Meta.t
-val value : 'a t -> 'a
-val map : ('a -> 'b) -> 'a t -> 'b t
+val mk : (formatted_string -> case -> test) with_options
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : string -> float -> result -> Gradescope.Test.t

@@ -5,7 +5,7 @@ type 'a with_options =
   ?hint:string ->
   ?hidden:bool ->
   ?number:string ->
-  ?output:Formatted_string.t ->
+  ?output:formatted_string ->
   ?status:status ->
   ?visibility:visibility ->
   ?tags:string list ->
@@ -15,11 +15,11 @@ type 'a with_options =
 module type META = sig
   type t
   val max_score : t -> float option
-  val name : t -> Formatted_string.t
+  val name : t -> formatted_string
   val name_str : t -> string
   val name_format : t -> output_string_format
   val number : t -> string option
-  val output : t -> Formatted_string.t option
+  val output : t -> formatted_string option
   val output_str : t -> string option
   val output_format : t -> output_string_format option
   val status : t -> status option

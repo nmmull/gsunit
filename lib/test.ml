@@ -5,11 +5,11 @@ module Meta = struct
   type t =
     {
       max_score: float option;
-      name: Formatted_string.t;
+      name: formatted_string;
       hint: string option;
       hidden: bool;
       number: string option;
-      output: Formatted_string.t option;
+      output: formatted_string option;
       status: status option;
       visibility: visibility;
       tags: string list option;
@@ -42,12 +42,12 @@ module Meta = struct
 
   let max_score t = t.max_score
   let name t = t.name
-  let name_str t = fst t.name
-  let name_format t = snd t.name
+  let name_str t = str t.name
+  let name_format t = format t.name
   let number t = t.number
   let output t = t.output
-  let output_str t = Option.map fst (output t)
-  let output_format t = Option.map snd (output t)
+  let output_str t = Option.map str (output t)
+  let output_format t = Option.map format (output t)
   let status t = t.status
   let tags t = t.tags
   let visibility t = t.visibility
@@ -57,8 +57,12 @@ module Meta = struct
 end
 
 include (Meta : META with type t := Meta.t)
+include With_meta (Meta)
 
-type 'a t = Meta.t * 'a
+type case =
+  [ `Single of OUnitTest.test_fun
+  | `Multi of SubTest.test list
+  ]
 type test = SubTest.test list t
 type result = SubTest.result list t
 
@@ -73,49 +77,24 @@ let mk
       ?tags
       ?extra_data
       name
-      a =
-  ( Meta.mk
-      ?hidden
-      ?max_score
-      ?hint
-      ?number
-      ?output
-      ?status
-      ?tags
-      ?visibility
-      ?extra_data
-      name
-  , a
-  )
-
-let of_test_fun
-      ?max_score
-      ?hint
-      ?hidden
-      ?number
-      ?output
-      ?status
-      ?visibility
-      ?tags
-      ?extra_data
-      name
-      test_fun =
-  mk
-    ?hidden
-    ?max_score
-    ?hint
-    ?number
-    ?output
-    ?status
-    ?tags
-    ?visibility
-    ?extra_data
-    name
-    [ SubTest.mk (fst name) test_fun ]
-
-let meta (m, _) = m
-let value (_, a) = a
-let map f (m, a) = (m, f a)
+      case =
+  let case =
+    match case with
+    | `Single test_fun -> [ SubTest.mk "dummy" test_fun ]
+    | `Multi subtests -> subtests
+  in
+  mk (Meta.mk
+        ?hidden
+        ?max_score
+        ?hint
+        ?number
+        ?output
+        ?status
+        ?tags
+        ?visibility
+        ?extra_data
+        name)
+    case
 
 let to_ounit_test t =
   let open OUnit2 in

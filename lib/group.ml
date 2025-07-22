@@ -8,15 +8,15 @@ module Meta = struct
       max_score: float;
     }
 
-  let mk name max_score = {name; max_score}
+  let mk ~max_score name = {name; max_score}
 
   let name m = m.name
   let max_score m = m.max_score
 end
 
 include (Meta : META with type t := Meta.t)
+include With_meta (Meta)
 
-type 'a t = Meta.t * 'a
 type test = Test.test list t
 type result = Test.result list t
 
@@ -29,10 +29,7 @@ let max_score_tests tests =
        | Some max_score -> go (num + 1, max_score +. acc) tests
   in go (0, 0.) tests
 
-let mk name max_score a =
-  (Meta.mk name max_score, a)
-
-let of_tests ?max_score name tests =
+let mk ?max_score name tests =
   let max_score =
     match max_score with
     | Some max_score ->
@@ -51,14 +48,10 @@ let of_tests ?max_score name tests =
        | None -> raise MissingTestMaxScore
        | Some max_score -> max_score
   in
-  mk name max_score tests
-
-let meta (m, _) = m
-let value (_, a) = a
-let map f (m, a)  = (m, f a)
+  mk (Meta.mk ~max_score name) tests
 
 let num_tests t = List.length (value t)
-let num_max_score_given t = fst (max_score_tests (value t))
+let num_max_score_given t = str (max_score_tests (value t))
 let max_score_given t = snd (max_score_tests (value t))
 let num_remainder t = num_tests t - num_max_score_given t
 let max_score_remainder t =

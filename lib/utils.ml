@@ -83,3 +83,33 @@ let json_of_float f = `Float f
 let json_of_int n = `Int n
 let json_of_string s = `String s
 let json_of_tags t = `List (List.map json_of_string t)
+
+type formatted_string = string * output_string_format
+
+let str (s, _) = s
+let format (_, f) = f
+
+let text s = (s, `Text)
+let html s = (s, `Html)
+let simple_format s = (s, `Simple_format)
+let md s = (s, `Md)
+let ansi s = (s, `Ansi)
+
+module type WITH_META = sig
+  type meta
+  type 'a t
+
+  val mk : meta -> 'a -> 'a t
+  val meta : 'a t -> meta
+  val value : 'a t -> 'a
+  val map : ('a -> 'b) -> 'a t -> 'b t
+end
+
+module With_meta (M : sig type t end) = struct
+  type 'a t = M.t * 'a
+
+  let mk m a = (m, a)
+  let meta (m, _) = m
+  let value (_, a) = a
+  let map f (m, a) = (m, f a)
+end

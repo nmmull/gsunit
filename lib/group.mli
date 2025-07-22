@@ -3,22 +3,17 @@ open Utils
 
 module Meta : sig
   type t
-  val mk : string -> float -> t
+  val mk : max_score:float -> string -> t
   include META with type t := t
 end
 
 include META with type t := Meta.t
+include WITH_META with type meta := Meta.t
 
-type 'a t
 type test = Test.test list t
 type result = Test.result list t
 
-val mk : string -> float -> 'a -> 'a t
-val of_tests : ?max_score:float -> string -> Test.test list -> test
-
-val meta : 'a t -> Meta.t
-val value : 'a t -> 'a
-val map : ('a -> 'b) -> 'a t -> 'b t
+val mk : ?max_score:float -> string -> Test.test list -> test
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : result -> Gradescope.Test.t list

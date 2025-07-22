@@ -4,7 +4,7 @@ open Utils
 module Meta = struct
   type t =
     {
-      output: Formatted_string.t option;
+      output: formatted_string option;
       visibility: visibility;
       stdout_visibility: visibility;
       extra_data: Yojson.Basic.t option
@@ -24,16 +24,16 @@ module Meta = struct
     }
 
   let output m = m.output
-  let output_str m = Option.map fst (output m)
-  let output_format m = Option.map snd (output m)
+  let output_str m = Option.map str (output m)
+  let output_format m = Option.map format (output m)
   let visibility m = m.visibility
   let stdout_visibility m = m.stdout_visibility
   let extra_data m = m.extra_data
 end
 
 include (Meta : META with type t := Meta.t)
+include With_meta (Meta)
 
-type 'a t = Meta.t * 'a
 type test = Group.test list t
 type result = Group.result list t
 
@@ -41,20 +41,13 @@ let mk
       ?output
       ?visibility
       ?stdout_visibility
-      ?extra_data
-      a =
-  ( Meta.mk
+      ?extra_data =
+  mk (Meta.mk
       ?output
       ?visibility
       ?stdout_visibility
       ?extra_data
-      ()
-  , a
-  )
-
-let meta (m, _) = m
-let value (_, t) = t
-let map f (m, a) = (m, f a)
+      ())
 
 let to_ounit_test suite =
   suite

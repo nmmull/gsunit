@@ -1,4 +1,5 @@
 include SubTest_intf.Intf
+open Utils
 
 module Meta : sig
   type t
@@ -7,13 +8,11 @@ module Meta : sig
 end
 
 include META with type t := Meta.t
+include WITH_META with type meta := Meta.t
 
-type 'a t
-type test = OUnitTest.test_fun t
+type case = OUnitTest.test_fun
+type test = case t
 type result = [ `Passed | `Failed ] t
 
-val mk: (string -> 'a -> 'a t) with_options
-val meta : 'a t -> Meta.t
-val value : 'a t -> 'a
-val map : ('a -> 'b) -> 'a t -> 'b t
+val mk: (string -> case -> test) with_options
 val to_ounit_test : test -> OUnitTest.test
