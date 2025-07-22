@@ -1,4 +1,4 @@
-open Utils
+include Utils
 
 module SubTest = SubTest
 module Test = Test
@@ -6,7 +6,6 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
-include Utils
 
 let run
       ?(debug=false)
