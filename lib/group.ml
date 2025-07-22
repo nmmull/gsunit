@@ -1,9 +1,6 @@
 include Group_intf
 open Utils
 
-exception MissingTestMaxScore
-exception InvalidGroupMaxScore
-
 module Meta = struct
   type t =
     {
@@ -87,23 +84,3 @@ let test_to_result ounit_results =
        (fun i ->
          Test.test_to_result
            (results_by_index i ounit_results)))
-
-  (* List.mapi *)
-  (*   (fun i test -> *)
-  (*     let test_results = *)
-  (*       test_results *)
-  (*       |> Utils.results_by_index i *)
-  (*       |> List.map *)
-  (*            (fun (nodes, result) -> *)
-  (*              match nodes with *)
-  (*              | [OUnitTest.Label _; OUnitTest.ListItem j] -> *)
-  (*                 SubTest.meta (List.nth (Test.value test) j), result *)
-  (*              | _ -> assert false) *)
-  (*     in *)
-  (*    in *)
-  (*     Test.to_gradescope *)
-  (*       (group |> meta |> name) *)
-  (*       default_max_score *)
-  (*       test_results *)
-  (*       test) *)
-  (*   (tests group) *)

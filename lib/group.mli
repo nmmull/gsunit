@@ -1,9 +1,6 @@
 include Group_intf.Intf
 open Utils
 
-exception MissingTestMaxScore
-exception InvalidGroupMaxScore
-
 module Meta : sig
   type t
   val mk : string -> float -> t

@@ -1,3 +1,6 @@
+exception MissingTestMaxScore
+exception InvalidGroupMaxScore
+
 module type META = sig
   type t
   val name: t -> string
