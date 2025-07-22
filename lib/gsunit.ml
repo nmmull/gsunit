@@ -7,7 +7,6 @@ module Suite = Suite
 module Gradescope = Gradescope
 
 let run
-      ?(debug=false)
       ?(ounit_test_runner=default_ounit_test_runner)
       ?output
       ?visibility
@@ -22,7 +21,7 @@ let run
       ?extra_data
       suite
   in
-  if debug
+  if Array.exists ((=) "-ounit") Sys.argv
   then OUnit2.run_test_tt_main (Suite.to_ounit_test suite)
   else
     let ounit_results =
