@@ -1,5 +1,10 @@
 open Utils
 
+module Suite = Suite
+module Group = Group
+module Test = Test
+module SubTest = SubTest
+
 let run
       ?(debug=false)
       ?(ounit_test_runner=default_ounit_test_runner)
