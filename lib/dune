@@ -1,3 +1,4 @@
 (library
+ (public_name gsunit)
  (name gsunit)
  (libraries ounit2 yojson))
