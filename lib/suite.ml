@@ -1,28 +1,12 @@
+include Suite_intf
 open Utils
-
-type 'a with_options =
-  ?output:Formatted_string.t ->
-  ?visibility:Gradescope.visibility ->
-  ?stdout_visibility:Gradescope.visibility ->
-  ?extra_data:Yojson.Basic.t ->
-  'a
-
-module type META = sig
-  type t
-  val output : t -> Formatted_string.t option
-  val output_str : t -> string option
-  val output_format : t -> Gradescope.output_string_format option
-  val visibility : t -> Gradescope.visibility
-  val stdout_visibility : t -> Gradescope.visibility
-  val extra_data : t -> Yojson.Basic.t option
-end
 
 module Meta = struct
   type t =
     {
       output: Formatted_string.t option;
-      visibility: Gradescope.visibility;
-      stdout_visibility: Gradescope.visibility;
+      visibility: visibility;
+      stdout_visibility: visibility;
       extra_data: Yojson.Basic.t option
     }
 
@@ -79,7 +63,7 @@ let to_ounit_test suite =
   |> OUnit2.(>:::) "Gradescope suite"
 
 let to_gradescope suite =
-  Gradescope.mk
+  Gradescope.Suite.mk
     ?output:(suite |> meta |> output_str)
     ?output_format:(suite |> meta |> output_format)
     ?visibility:(suite |> meta |> visibility |> opt_of_visibility)

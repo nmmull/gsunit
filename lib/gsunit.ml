@@ -18,7 +18,7 @@ let run
       suite
       |> test_to_result ounit_results
       |> to_gradescope
-      |> Gradescope.to_json
+      |> Gradescope.Suite.to_json
     in
     Yojson.Basic.to_file
       "ounit_gradescope_output.json"

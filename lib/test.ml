@@ -1,34 +1,5 @@
+include Test_intf
 open Utils
-
-type 'a with_options =
-  ?max_score:float ->
-  ?hint:string ->
-  ?hidden:bool ->
-  ?number:string ->
-  ?output: Formatted_string.t ->
-  ?status: Gradescope.status ->
-  ?visibility:Gradescope.visibility ->
-  ?tags:string list ->
-  ?extra_data: Yojson.Basic.t ->
-  'a
-
-module type META = sig
-  type t
-  val max_score : t -> float option
-  val name : t -> Formatted_string.t
-  val name_str : t -> string
-  val name_format : t -> Gradescope.output_string_format
-  val number : t -> string option
-  val output : t -> Formatted_string.t option
-  val output_str : t -> string option
-  val output_format : t -> Gradescope.output_string_format option
-  val status : t -> Gradescope.status option
-  val tags : t -> string list option
-  val visibility : t -> Gradescope.visibility
-  val extra_data : t -> Yojson.Basic.t option
-  val hint : t -> string option
-  val hidden : t -> bool
-end
 
 module Meta = struct
   type t =
@@ -39,8 +10,8 @@ module Meta = struct
       hidden: bool;
       number: string option;
       output: Formatted_string.t option;
-      status: Gradescope.status option;
-      visibility: Gradescope.visibility;
+      status: status option;
+      visibility: visibility;
       tags: string list option;
       extra_data: Yojson.Basic.t option;
     }

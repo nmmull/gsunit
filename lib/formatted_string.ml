@@ -1,4 +1,6 @@
-type t = string * Gradescope.output_string_format
+open Utils
+
+type t = string * output_string_format
 
 let str (s, _) = s
 let format (_, f) = f

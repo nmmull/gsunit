@@ -1,5 +1,3 @@
-(* type ounit_results = (OUnitTest.node list * OUnitTest.result) list *)
-
 type ounit_results = (int list * [ `Passed | `Failed ]) list
 
 type ounit_test_runner = OUnitTest.(test -> result_list)
@@ -35,6 +33,26 @@ let results_by_index i =
       | j :: path when i = j -> (path, result) :: acc
       | _ -> acc)
     []
+
+type output_string_format =
+  [ `Text
+  | `Html
+  | `Simple_format
+  | `Md
+  | `Ansi
+  ]
+
+type status =
+  [ `Passed
+  | `Failed
+  ]
+
+type visibility =
+  [ `Hidden
+  | `After_due_date
+  | `After_published
+  | `Visible
+  ]
 
 let opt_of_visibility = function
   | `Visible -> None

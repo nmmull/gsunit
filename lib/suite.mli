@@ -1,21 +1,5 @@
+include Suite_intf.Intf
 open Utils
-
-type 'a with_options =
-  ?output:Formatted_string.t ->
-  ?visibility:Gradescope.visibility ->
-  ?stdout_visibility:Gradescope.visibility ->
-  ?extra_data:Yojson.Basic.t ->
-  'a
-
-module type META = sig
-  type t
-  val output : t -> Formatted_string.t option
-  val output_str : t -> string option
-  val output_format : t -> Gradescope.output_string_format option
-  val visibility : t -> Gradescope.visibility
-  val stdout_visibility : t -> Gradescope.visibility
-  val extra_data : t -> Yojson.Basic.t option
-end
 
 module Meta : sig
   type t
@@ -36,6 +20,6 @@ val value : 'a t -> 'a
 val map : ('a -> 'b) -> 'a t -> 'b t
 
 val to_ounit_test : test -> OUnitTest.test
-val to_gradescope : result -> Gradescope.t
+val to_gradescope : result -> Gradescope.Suite.t
 
 val test_to_result : ounit_results -> test -> result
