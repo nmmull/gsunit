@@ -22,7 +22,7 @@ let run
       suite
   in
   if Array.exists
-       ((=) "--gsunit-debug")
+       ((=) "-gsunit-to-ounit")
        Sys.argv
   then OUnit2.run_test_tt_main (Suite.to_ounit_test suite)
   else
