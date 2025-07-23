@@ -7,6 +7,9 @@ module Suite = Suite
 module Gradescope = Gradescope
 
 let run
+      ?group_name_formatter
+      ?output_formatter
+      ?status_formatter
       ?(ounit_test_runner=default_ounit_test_runner)
       ?output
       ?visibility
@@ -24,9 +27,7 @@ let run
   if Array.exists ((=) "-ounit") Sys.argv
   then
     ignore
-      (default_ounit_test_runner
-         ~debug:true
-         ()
+      (default_ounit_test_runner ~debug:true ()
          (Suite.to_ounit_test suite))
   else
     let ounit_results =
@@ -38,8 +39,10 @@ let run
     let gradescope_results =
       suite
       |> Suite.test_to_result ounit_results
-      (* |> reformat_output *)
       |> Suite.to_gradescope
+           ?group_name_formatter
+           ?output_formatter
+           ?status_formatter
       |> Gradescope.Suite.to_json
     in
     Yojson.Basic.to_file

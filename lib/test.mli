@@ -10,16 +10,37 @@ end
 include META with type t := Meta.t
 include WITH_META with type meta := Meta.t
 
+val name' : Meta.t -> string
+
 type case =
   [ `Single of OUnitTest.test_fun
   | `Multi of SubTest.test list
   ]
+
 type test = SubTest.test list t
 type result = SubTest.result list t
 
-val mk : (case -> test) with_options
+val mk : ('a -> 'a t) with_options
+
+val update_meta : ('a t -> 'a t) with_options
+
+val of_case : (case -> test) with_options
 
 val to_ounit_test : test -> OUnitTest.test
-val to_gradescope : string -> float -> result -> Gradescope.Test.t
 
-val test_to_result : ounit_results -> test -> result
+val test_to_result :
+  ounit_results -> test -> result
+
+type output_formatter = result -> formatted_string option
+type status_formatter = result -> status option
+
+val default_output_formatter : output_formatter
+val default_status_formatter : status_formatter
+
+val to_gradescope :
+  ?output_formatter:output_formatter ->
+  ?status_formatter:status_formatter ->
+  group_name_formatter:group_name_formatter ->
+  default_max_score:float ->
+  result ->
+  Gradescope.Test.t

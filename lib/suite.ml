@@ -55,14 +55,25 @@ let to_ounit_test suite =
   |> List.map Group.to_ounit_test
   |> OUnit2.(>:::) "Gradescope suite"
 
-let to_gradescope suite =
+let to_gradescope
+      ?group_name_formatter
+      ?output_formatter
+      ?status_formatter
+      suite =
+  let to_gradescope r =
+    Group.to_gradescope
+      ?group_name_formatter
+      ?output_formatter
+      ?status_formatter
+      r
+  in
   Gradescope.Suite.mk
     ?output:(suite |> meta |> output_str)
     ?output_format:(suite |> meta |> output_format)
     ?visibility:(suite |> meta |> visibility |> opt_of_visibility)
     ?stdout_visibility:(suite |> meta |> stdout_visibility |> opt_of_visibility)
     ?extra_data:(suite |> meta |> extra_data)
-    ~tests:(suite |> value |> List.concat_map Group.to_gradescope)
+    ~tests:(suite |> value |> List.concat_map to_gradescope)
     ()
 
 let test_to_result ounit_results =

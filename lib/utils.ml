@@ -91,6 +91,7 @@ type formatted_string = string * output_string_format
 
 let str (s, _) = s
 let format (_, f) = f
+let format_str s f = (s, f)
 
 let text s = (s, `Text)
 let html s = (s, `Html)
@@ -116,3 +117,17 @@ module With_meta (M : sig type t end) = struct
   let value (_, a) = a
   let map f (m, a) = (m, f a)
 end
+
+(* https://discuss.ocaml.org/t/rounding-floats-to-number-of-decimals/6921 *)
+let round2 x =
+  if x -. (Float.round x) = 0.
+  then x
+  else
+    floor (x *. 100. +. 1.0) /. 100.
+
+type group_name_formatter = formatted_string -> formatted_string
+
+let default_group_name_formatter group_name_str name =
+  match format name with
+  | `Text -> text ("[" ^ group_name_str ^ "] " ^ str name)
+  | _ -> name

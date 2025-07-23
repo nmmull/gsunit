@@ -64,12 +64,21 @@ let to_ounit_test tgroup =
   |> List.map Test.to_ounit_test
   |> OUnit2.(>:::) (tgroup |> meta |> name)
 
-let to_gradescope rgroup =
+let to_gradescope
+      ?(group_name_formatter=default_group_name_formatter)
+      ?output_formatter
+      ?status_formatter
+      rgroup =
   let name = rgroup |> meta |> name in
   let default_max_score = max_score_remainder rgroup in
   rgroup
   |> value
-  |> List.map (Test.to_gradescope name default_max_score)
+  |> List.map
+       (Test.to_gradescope
+          ?output_formatter
+          ?status_formatter
+          ~group_name_formatter:(group_name_formatter name)
+          ~default_max_score)
 
 let test_to_result ounit_results =
   map

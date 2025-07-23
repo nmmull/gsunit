@@ -10,9 +10,12 @@ end
 include META with type t := Meta.t
 include WITH_META with type meta := Meta.t
 
+val name' : Meta.t -> string
+
 type case = OUnitTest.test_fun
 type test = case t
 type result = [ `Passed | `Failed ] t
 
-val mk: (case -> test) with_options
+val mk : ('a -> 'a t) with_options
+val of_case : (case -> test) with_options
 val to_ounit_test : test -> OUnitTest.test

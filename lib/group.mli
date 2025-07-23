@@ -16,6 +16,11 @@ type result = Test.result list t
 val mk : ?max_score:float -> name:string -> Test.test list -> test
 
 val to_ounit_test : test -> OUnitTest.test
-val to_gradescope : result -> Gradescope.Test.t list
+val to_gradescope :
+  ?group_name_formatter:(string -> group_name_formatter) ->
+  ?output_formatter:Test.output_formatter ->
+  ?status_formatter:Test.status_formatter ->
+  result ->
+  Gradescope.Test.t list
 
 val test_to_result : ounit_results -> test -> result

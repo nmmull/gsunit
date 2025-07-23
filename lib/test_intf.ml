@@ -5,25 +5,24 @@ type 'a with_options =
   ?hint:string ->
   ?hidden:bool ->
   ?number:string ->
-  ?output:formatted_string ->
+  ?output:string ->
+  ?output_format:output_string_format ->
   ?status:status ->
   ?visibility:visibility ->
   ?tags:string list ->
   ?extra_data: Yojson.Basic.t ->
   ?name_format:output_string_format ->
-  name:string ->
+  ?name:string ->
   'a
 
 module type META = sig
   type t
   val max_score : t -> float option
-  val name : t -> formatted_string
-  val name_str : t -> string
+  val name : t -> string option
   val name_format : t -> output_string_format
   val number : t -> string option
-  val output : t -> formatted_string option
-  val output_str : t -> string option
-  val output_format : t -> output_string_format option
+  val output : t -> string option
+  val output_format : t -> output_string_format
   val status : t -> status option
   val tags : t -> string list option
   val visibility : t -> visibility
