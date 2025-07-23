@@ -49,9 +49,12 @@ let run
            ?status_formatter
       |> Gradescope.Suite.to_json
     in
-    Yojson.Basic.to_file
+    Out_channel.with_open_text
       "ounit_gradescope_output.json"
-      gradescope_results
+      (fun out_channel ->
+         Yojson.Basic.pretty_to_channel
+           out_channel
+           gradescope_results)
 
 let check
       ?test_name
