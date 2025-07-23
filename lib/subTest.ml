@@ -41,11 +41,15 @@ let mk
         ?hidden
         ())
 
-type case = OUnitTest.test_fun
-type test = case t
+type test = OUnitTest.test_fun t
 type result = [ `Passed | `Failed ] t
 
-let of_case = mk
+let of_test_fun
+      ?name
+      ?hint
+      ?length
+      ?hidden =
+  mk ?name ?hint ?length ?hidden
 
 let to_ounit_test t =
   let open OUnit2 in

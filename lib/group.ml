@@ -29,7 +29,9 @@ let max_score_tests tests =
        | Some max_score -> go (num + 1, max_score +. acc) tests
   in go (0, 0.) tests
 
-let mk ?max_score ~name tests =
+let mk ~max_score ~name = mk (Meta.mk ~max_score ~name)
+
+let of_tests ?max_score ~name tests =
   let max_score =
     match max_score with
     | Some max_score ->
@@ -48,7 +50,7 @@ let mk ?max_score ~name tests =
        | None -> raise MissingTestMaxScore
        | Some max_score -> max_score
   in
-  mk (Meta.mk ~max_score ~name) tests
+  mk ~max_score ~name tests
 
 let num_tests t = List.length (value t)
 let num_max_score_given t = str (max_score_tests (value t))

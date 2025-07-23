@@ -13,7 +13,8 @@ include WITH_META with type meta := Meta.t
 type test = Test.test list t
 type result = Test.result list t
 
-val mk : ?max_score:float -> name:string -> Test.test list -> test
+val mk : max_score:float -> name:string -> 'a -> 'a t
+val of_tests : ?max_score:float -> name:string -> Test.test list -> test
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope :

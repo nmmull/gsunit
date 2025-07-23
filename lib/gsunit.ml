@@ -6,6 +6,10 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
+let subtest = SubTest.of_test_fun
+let test = Test.of_case
+let group = Group.of_tests
+
 let run
       ?group_name_formatter
       ?output_formatter
