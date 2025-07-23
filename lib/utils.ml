@@ -15,7 +15,7 @@ let default_ounit_test_runner ?(debug=false) () =
 let reformat_ounit_results results =
   let reformat_path =
     let rec go acc = function
-      | [] -> List.rev acc
+      | [] -> acc
       | OUnitTest.ListItem i :: path -> go (i :: acc) path
       | _ :: path -> go acc path
     in go []

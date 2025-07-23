@@ -65,14 +65,18 @@ let check
   let name =
     match test_name with
     | Some name -> name
-    | None -> Printf.sprintf "%s %s = %s" fn_name (in_printer i) (out_printer e)
+    | None ->
+      Printf.sprintf
+        "%s %s = %s"
+        fn_name
+        (in_printer i)
+        (out_printer e)
   in
   let test_fun _ =
     let a = fn i in
     let msg =
       Printf.sprintf
-        "test name: %s\nfunction: %s\ninput: %s\nexpected: %s\nactual: %s"
-        name
+        "function: %s\ninput: %s\nexpected: %s\nactual: %s"
         fn_name
         (in_printer i)
         (out_printer e)
