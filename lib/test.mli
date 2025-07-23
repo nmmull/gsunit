@@ -3,7 +3,7 @@ open Utils
 
 module Meta : sig
   type t
-  val mk : (formatted_string -> t) with_options
+  val mk : (unit -> t) with_options
   include META with type t := t
 end
 
@@ -17,7 +17,7 @@ type case =
 type test = SubTest.test list t
 type result = SubTest.result list t
 
-val mk : (formatted_string -> case -> test) with_options
+val mk : (case -> test) with_options
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope : string -> float -> result -> Gradescope.Test.t

@@ -26,10 +26,12 @@ module Meta = struct
         ?(visibility=`Visible)
         ?tags
         ?extra_data
-        name =
+        ?(name_format=`Text)
+        ~name
+        () =
     {
       max_score;
-      name;
+      name=(name, name_format); (* TODO: FIX *)
       hint;
       hidden;
       number;
@@ -76,11 +78,12 @@ let mk
       ?visibility
       ?tags
       ?extra_data
-      name
+      ?name_format
+      ~name
       case =
   let case =
     match case with
-    | `Single test_fun -> [ SubTest.mk "dummy" test_fun ]
+    | `Single test_fun -> [ SubTest.mk ~name:"dummy" test_fun ]
     | `Multi subtests -> subtests
   in
   mk (Meta.mk
@@ -93,7 +96,9 @@ let mk
         ?tags
         ?visibility
         ?extra_data
-        name)
+        ?name_format
+        ~name
+        ())
     case
 
 let to_ounit_test t =

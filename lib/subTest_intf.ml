@@ -10,6 +10,7 @@ type 'a with_options =
   ?hint:string ->
   ?length:float ->
   ?hidden:bool ->
+  name:string ->
   'a
 
 module type Intf = sig

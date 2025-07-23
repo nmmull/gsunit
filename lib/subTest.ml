@@ -14,7 +14,8 @@ module Meta = struct
         ?hint
         ?(length=2.0)
         ?(hidden=false)
-        name =
+        ~name
+        () =
     {name; hint; length; hidden}
 
   let name m = m.name
@@ -30,12 +31,13 @@ let mk
       ?hint
       ?length
       ?hidden
-      name =
+      ~name =
   mk (Meta.mk
         ?hint
         ?length
         ?hidden
-        name)
+        ~name
+        ())
 
 type case = OUnitTest.test_fun
 type test = case t

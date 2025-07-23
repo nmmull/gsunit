@@ -3,7 +3,7 @@ open Utils
 
 module Meta : sig
   type t
-  val mk : (string -> t) with_options
+  val mk : (unit -> t) with_options
   include META with type t := t
 end
 
@@ -14,5 +14,5 @@ type case = OUnitTest.test_fun
 type test = case t
 type result = [ `Passed | `Failed ] t
 
-val mk: (string -> case -> test) with_options
+val mk: (case -> test) with_options
 val to_ounit_test : test -> OUnitTest.test

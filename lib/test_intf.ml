@@ -10,6 +10,8 @@ type 'a with_options =
   ?visibility:visibility ->
   ?tags:string list ->
   ?extra_data: Yojson.Basic.t ->
+  ?name_format:output_string_format ->
+  name:string ->
   'a
 
 module type META = sig
