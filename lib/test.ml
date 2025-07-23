@@ -263,15 +263,18 @@ let to_gradescope
       /. float_of_int num_sub_tests
   in
   let score = ceil3 score in
-  let name =
-    if (t |> meta |> hidden)
-    then text "<hidden>"
-    else
-      match t |> meta |> hint with
-      | Some hint -> text hint
-      | None ->
-         group_name_formatter
-           (format_str (t |> meta |> name') (t |> meta |> name_format))
+  let formatted_name =
+    let formatted_name =
+      if (t |> meta |> hidden)
+      then text "<hidden>"
+      else
+        match t |> meta |> hint with
+        | Some hint -> text hint
+        | None ->
+           match t |> meta |> name with
+           | None -> text (t |> meta |> name')
+           | Some name -> format_str name (t |> meta |> name_format)
+    in group_name_formatter formatted_name
   in
   Gradescope.Test.mk
     ?visibility:(t |> meta |> visibility |> opt_of_visibility)
@@ -281,8 +284,8 @@ let to_gradescope
     ?tags:(t |> meta |> tags)
     ?extra_data:(t |> meta |> extra_data)
     ?number:(t |> meta |> number)
-    ?name_format:(format name |> opt_of_format)
+    ?name_format:(format formatted_name |> opt_of_format)
     ~max_score
     ~score
-    ~name:(str name)
+    ~name:(str formatted_name)
     ()
