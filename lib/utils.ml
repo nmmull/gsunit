@@ -6,7 +6,7 @@ let default_ounit_test_runner : unit -> ounit_test_runner =
   fun () ->
   let conf = !OUnitCore.run_test_tt_main_conf [] in
   let logger = OUnitLogger.null_logger in
-  let runner = OUnitRunner.of_name "process" in
+  let runner = OUnitRunner.of_name "processes" in
   let chooser = snd (OUnitChooser.choice conf) in
   OUnitCore.run_test_tt conf logger runner chooser
 
