@@ -4,10 +4,11 @@ type ounit_test_runner = OUnitTest.(test -> result_list)
 
 let default_ounit_test_runner : unit -> ounit_test_runner =
   fun () ->
-  let conf = !OUnitCore.run_test_tt_main_conf [] in
+  (* let conf = !OUnitCore.run_test_tt_main_conf [] in *)
+  let conf = OUnitConf.default () in
   let logger = OUnitLogger.null_logger in
   let runner = OUnitRunner.of_name "processes" in
-  let chooser = snd (OUnitChooser.choice conf) in
+  let chooser = OUnitChooser.of_name "simple" in
   OUnitCore.run_test_tt conf logger runner chooser
 
 let reformat_ounit_results results =
