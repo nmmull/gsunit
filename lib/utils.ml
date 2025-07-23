@@ -119,11 +119,17 @@ module With_meta (M : sig type t end) = struct
 end
 
 (* https://discuss.ocaml.org/t/rounding-floats-to-number-of-decimals/6921 *)
-let round2 x =
+let ceil3 x =
   if x -. (Float.round x) = 0.
   then x
   else
-    floor (x *. 100. +. 1.0) /. 100.
+    floor (x *. 1000. +. 1.0) /. 1000.
+
+let floor3 x =
+  if x -. (Float.round x) = 0.
+  then x
+  else
+    floor (x *. 1000.) /. 1000.
 
 type group_name_formatter = formatted_string -> formatted_string
 

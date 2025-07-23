@@ -187,35 +187,41 @@ let test_to_result ounit_results =
 
 type output_formatter = result -> formatted_string option
 let default_output_formatter test_results =
-  let failed r =
-    r
-    |> SubTest.value
-    |> ((=) `Failed)
-  in
-  let subtest_label r =
-    let open SubTest in
-    if r |> meta |> hidden
-    then "<hidden>"
-    else Option.value (r |> meta |> hint) ~default:(r |> meta |> name')
-  in
-  let failed_list =
-    test_results
-    |> value
-    |> List.mapi (fun i r -> (i, r))
-    |> List.filter (fun (_, r) -> failed r)
-    |> List.map (fun (i, r) -> (i, subtest_label r))
-    |> List.map (fun (i, label) -> Printf.sprintf "%d: %s" i label)
-  in
-  let output_str =
-    let lines =
-      [
-        "Failed Tests:";
-        "-------------";
-        "";
-      ] @ failed_list
+  if test_results |> value |> List.length |> ((=) 1)
+  then None
+  else
+    let failed r =
+      r
+      |> SubTest.value
+      |> ((=) `Failed)
     in
-    String.concat "\n" lines
-  in Some (text output_str)
+    let subtest_label r =
+      let open SubTest in
+      if r |> meta |> hidden
+      then "<hidden>"
+      else Option.value (r |> meta |> hint) ~default:(r |> meta |> name')
+    in
+    let failed_list =
+      test_results
+      |> value
+      |> List.mapi (fun i r -> (i, r))
+      |> List.filter (fun (_, r) -> failed r)
+      |> List.map (fun (i, r) -> (i, subtest_label r))
+      |> List.map (fun (i, label) -> Printf.sprintf "%d: %s" i label)
+    in
+    let output_str =
+      let lines =
+        [
+          "Failed Tests:";
+          "-------------";
+          "";
+        ] @ failed_list
+      in
+      String.concat "\n" lines
+    in
+    if List.length failed_list = 0
+    then None
+    else Some (text output_str)
 
 type status_formatter = result -> status option
 let default_status_formatter _ = None
@@ -246,6 +252,7 @@ let to_gradescope
       (t |> meta |> max_score)
       ~default:default_max_score
   in
+  let max_score = floor3 max_score in
   let score =
     let num_sub_tests = num_sub_tests t in
     if num_sub_tests = 0
@@ -255,10 +262,16 @@ let to_gradescope
       *. float_of_int (num_passed t)
       /. float_of_int num_sub_tests
   in
-  let score = round2 score in
+  let score = ceil3 score in
   let name =
-    group_name_formatter
-      (format_str (t |> meta |> name') (t |> meta |> name_format))
+    if (t |> meta |> hidden)
+    then text "<hidden>"
+    else
+      match t |> meta |> hint with
+      | Some hint -> text hint
+      | None ->
+         group_name_formatter
+           (format_str (t |> meta |> name') (t |> meta |> name_format))
   in
   Gradescope.Test.mk
     ?visibility:(t |> meta |> visibility |> opt_of_visibility)
