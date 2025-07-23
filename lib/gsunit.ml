@@ -52,3 +52,34 @@ let run
     Yojson.Basic.to_file
       "ounit_gradescope_output.json"
       gradescope_results
+
+let check
+      ?test_name
+      ?hint
+      ?hidden
+      ~printer
+      fn
+      fn_name
+      (i, e) =
+  let name =
+    match test_name with
+    | Some name -> name
+    | None -> Printf.sprintf "%s %s = %s" fn_name (printer i) (printer e)
+  in
+  let test_fun _ =
+    let a = fn i in
+    let msg =
+      Printf.sprintf
+        "test name: %s\nfunction: %s\ninput: %s\nexpected: %s\nactual: %s"
+        name
+        fn_name
+        i
+        e
+        a
+    in OUnit2.assert_equal ~msg e a
+  in
+  test
+    ?hidden
+    ?hint
+    ~name
+    (`Single test_fun)
