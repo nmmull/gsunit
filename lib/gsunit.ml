@@ -23,8 +23,11 @@ let run
   in
   if Array.exists ((=) "-ounit") Sys.argv
   then
-    let _ = print_endline "wtf" in
-    OUnit2.run_test_tt_main (Suite.to_ounit_test suite)
+    ignore
+      (default_ounit_test_runner
+         ~debug:true
+         ()
+         (Suite.to_ounit_test suite))
   else
     let ounit_results =
       suite
