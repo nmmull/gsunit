@@ -31,7 +31,9 @@ let run
   if Array.exists ((=) "-ounit") Sys.argv
   then
     ignore
-      (default_ounit_test_runner ~debug:true ()
+      (default_ounit_test_runner
+         ~debug:true
+         ()
          (Suite.to_ounit_test suite))
   else
     let ounit_results =
@@ -64,30 +66,39 @@ let check
       ~out_printer
       fn
       fn_name
-      (i, e) =
+      input
+      expected =
   let name =
     match test_name with
     | Some name -> name
     | None ->
+      (* TODO: FORMAT *)
       Printf.sprintf
         "%s %s = %s"
         fn_name
-        (in_printer i)
-        (out_printer e)
+        (in_printer input)
+        (out_printer expected)
   in
   let test_fun _ =
-    let a = fn i in
+    let actual = fn input in
     let msg =
+      (* TODO: FORMAT *)
       Printf.sprintf
         "function: %s\ninput: %s\nexpected: %s\nactual: %s"
         fn_name
-        (in_printer i)
-        (out_printer e)
-        (out_printer a)
-    in OUnit2.assert_equal ~msg e a
+        (in_printer input)
+        (out_printer expected)
+        (out_printer actual)
+    in OUnit2.assert_equal ~msg expected actual
   in
   test
     ?hidden
     ?hint
     ~name
     (`Single test_fun)
+
+let check_ref = assert false
+
+let check_list = assert false
+
+let check_list_ref = assert false
