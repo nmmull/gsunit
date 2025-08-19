@@ -287,7 +287,6 @@ let to_gradescope
           *. float_of_int (num_passed t)
           /. float_of_int num_sub_tests
       in
-      let score = ceil3 score in
       Some (ceil3 score, floor3 max_score)
     in
     match score_max with

@@ -15,7 +15,7 @@ module Sqrt = struct
       ~name
       ~max_score
       [
-        t 4 1;
+        t 4 2;
         t 9 3;
         t 100 10;
         t 2 2;
@@ -72,7 +72,7 @@ module Is_prime = struct
         is_prime_ref
     in
     Gsunit.test
-      ~name:"other_tests"
+      ~name:"other tests"
       ~max_score:4.
       (`Multi
          [
