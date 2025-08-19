@@ -219,7 +219,7 @@ let default_output_formatter test_results =
       |> List.mapi (fun i r -> (i, subtest_label r, failed r))
       |> List.map (fun (i, label, failed) ->
           Printf.sprintf
-            "  %d. %s %s"
+            "%d. %s %s"
             (i + 1)
             (if failed then "FAILED" else "PASSED")
             label
@@ -228,14 +228,17 @@ let default_output_formatter test_results =
     let output_str =
       let lines =
         [
-          "## Results";
+          "-------";
+          "Results";
+          "-------";
+          "";
         ] @ failed_list
       in
       String.concat "\n" lines
     in
     if List.length failed_list = 0
     then None
-    else Some (md output_str)
+    else Some (text output_str)
 
 type status_formatter = result -> status option
 
