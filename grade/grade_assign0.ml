@@ -29,29 +29,66 @@ module Is_prime = struct
   let max_score = 5.
   let is_prime = Assign0.is_prime
 
+  let is_prime_ref (n : int) : bool =
+    let rec loop (i : int) : bool =
+      if i >= n
+      then true
+      else if n mod i = 0
+      then false
+      else loop (i + 1)
+    in
+    if n < 2
+    then false
+    else loop 2
+
   let test =
     let t =
-      Gsunit.check_sub
-           ~pp_in:Fmt.int
-           ~pp_out:Fmt.bool
-           is_prime
-           "is_prime"
+      Gsunit.check_sub_ref
+        ~pp_in:Fmt.int
+        ~pp_out:Fmt.bool
+        is_prime
+        "is_prime"
+        is_prime_ref
     in
     Gsunit.test
-      ~name
-      ~max_score
+      ~name:"simple tests"
       (`Multi
          [
-           t 0 false;
-           t 1 false;
-           t 2 true;
-           t 37 true;
-           t 57 true;
-           t 97 true;
+           t 0;
+           t 1;
+           t 2;
+           t 37;
+           t 57;
+           t 97;
+         ])
+
+  let other_tests =
+    let t =
+      Gsunit.check_sub_ref
+        ~pp_in:Fmt.int
+        ~pp_out:Fmt.bool
+        is_prime
+        "is_prime"
+        is_prime_ref
+    in
+    Gsunit.test
+      ~name:"other_tests"
+      ~max_score:4.
+      (`Multi
+         [
+           t 42;
+           t 42222221;
+           t 23;
          ])
 
   let tests =
-    Gsunit.group [ test ]
+    Gsunit.group
+      ~name
+      ~max_score
+      [
+        test;
+        other_tests;
+      ]
 end
 
 let () =
@@ -61,35 +98,3 @@ let () =
   ]
   |> Gsunit.suite
   |> Gsunit.run
-
-(* let grade_sqrt = *)
-(*   let test i = *)
-(*     let description = "(HIDDEN) testing sqrt " ^ string_of_int i in *)
-(*     let case _ = *)
-(*       let expected = Ref.sqrt i in *)
-(*       let actual = Assign0.sqrt i in *)
-(*       assert_equal expected actual *)
-(*     in *)
-(*     description >: gs_test_case case *)
-(*   in *)
-(*   "grading sqrt" >::: List.init 100 test *)
-
-(* let grade_is_prime = *)
-(*   let test i = *)
-(*     let description = "(HIDDEN) testing prime " ^ string_of_int i in *)
-(*     let expected = Ref.is_prime i in *)
-(*     let actual = Assign0.is_prime i in *)
-(*     let case _ = assert_equal expected actual in *)
-(*     description >: gs_test_case case *)
-(*   in *)
-(*   "grading is_prime" >::: List.init 100 test *)
-
-(* let tests = *)
-(*   [ *)
-(*     test_sqrt, 3; *)
-(*     test_is_prime, 3; *)
-(*     grade_sqrt, 7; *)
-(*     grade_is_prime, 7; *)
-(*   ] *)
-
-(* let _ = run_tests_gradescope tests *)
