@@ -6,10 +6,6 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
-type result_formatter = SubTest.result list -> formatted_string option
-
-type group_name_formatter = string option -> formatted_string -> formatted_string
-
 let subtest = SubTest.of_test_fun
 let test = Test.of_case
 let group = Group.of_tests

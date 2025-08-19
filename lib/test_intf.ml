@@ -30,7 +30,7 @@ module type META = sig
   val extra_data : t -> Yojson.Basic.t option
   val hint : t -> string option
   val hidden : t -> bool
-  val result_formatter : t -> (SubTest.result list -> formatted_string option) option
+  val result_formatter : t -> SubTest.result_formatter option
 end
 
 module type Intf = sig

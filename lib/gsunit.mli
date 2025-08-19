@@ -26,8 +26,6 @@ type output_string_format =
 
 type formatted_string = string * output_string_format
 
-type result_formatter = SubTest.result list -> formatted_string option
-
 type group_name_formatter = string option -> formatted_string -> formatted_string
 
 type ounit_test_runner = ?debug:bool -> unit -> OUnitTest.test -> OUnitTest.result_list
@@ -50,7 +48,7 @@ val test :
   ?visibility:visibility ->
   ?tags:string list ->
   ?extra_data:Yojson.Basic.t ->
-  ?result_formatter:result_formatter ->
+  ?result_formatter:SubTest.result_formatter ->
   ?name_format:output_string_format ->
   ?name:string ->
   [ `Single of OUnitTest.test_fun | `Multi of SubTest.test list ] -> Test.test

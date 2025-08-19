@@ -132,7 +132,7 @@ let simple_format s = (s, `Simple_format)
 let md s = (s, `Md)
 let ansi s = (s, `Ansi)
 
-type group_name_formatter = formatted_string -> formatted_string
+type group_name_formatter = string option -> formatted_string -> formatted_string
 
 let default_group_name_formatter group_name_str name =
   match format name, group_name_str with

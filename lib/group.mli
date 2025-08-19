@@ -23,7 +23,7 @@ val of_tests : (Test.test list -> test) with_options
 
 val to_ounit_test : test -> OUnitTest.test
 val to_gradescope :
-  ?group_name_formatter:(string option -> group_name_formatter) ->
+  ?group_name_formatter:group_name_formatter ->
   ?output_formatter:Test.output_formatter ->
   ?status_formatter:Test.status_formatter ->
   result ->

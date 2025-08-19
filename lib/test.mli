@@ -41,6 +41,6 @@ val to_gradescope :
   ?output_formatter:output_formatter ->
   ?status_formatter:status_formatter ->
   ?default_max_score:float ->
-  group_name_formatter:group_name_formatter ->
+  group_name_formatter:(formatted_string -> formatted_string) ->
   result ->
   Gradescope.Test.t

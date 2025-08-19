@@ -44,6 +44,8 @@ let mk
 type test = OUnitTest.test_fun t
 type result = [ `Passed | `Failed ] t
 
+type result_formatter = result list -> formatted_string option
+
 let of_test_fun
       ?name
       ?hint
