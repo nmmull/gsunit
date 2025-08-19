@@ -11,7 +11,7 @@ let floor3 x =
   else
     floor (x *. 1000.) /. 1000.
 
-let hidden_name = "<hidden>"
+let hidden_name = "(hidden)"
 
 module type WITH_META = sig
   type meta

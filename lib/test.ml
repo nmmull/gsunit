@@ -219,8 +219,8 @@ let default_output_formatter test_results =
       |> List.mapi (fun i r -> (i, subtest_label r, failed r))
       |> List.map (fun (i, label, failed) ->
           Printf.sprintf
-            "%d. %s %s"
-            i
+            "  %d. %s %s"
+            (i + 1)
             (if failed then "FAILED" else "PASSED")
             label
         )
@@ -228,7 +228,7 @@ let default_output_formatter test_results =
     let output_str =
       let lines =
         [
-          "# Failed Tests:";
+          "## Results";
         ] @ failed_list
       in
       String.concat "\n" lines
