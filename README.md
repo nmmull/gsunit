@@ -8,13 +8,12 @@ In particular, I've tried to be as true as possible to the [autograder specifica
 ## Usage
 
 Currently, the only way to use `Gsunit` is to build it from source.
-You can clone this repository run
+To use it in an existing project, you can clone this repository run:
 ```
 opam install gsunit/.
 ```
-to use it in an existing project.
 
-This library is currently not well documented.
+This library is not well documented.
 The file `lib/gsunit.mli` contains the simplest interface that is exposed by the library, and the directory `example` contains an example autograder.
 To run the autograder you can use (from within the root directory of the project):
 ```
