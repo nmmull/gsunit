@@ -6,28 +6,21 @@ module Group = Group
 module Suite = Suite
 module Gradescope = Gradescope
 
+type result_formatter = SubTest.result list -> formatted_string option
+
+type group_name_formatter = string option -> formatted_string -> formatted_string
+
 let subtest = SubTest.of_test_fun
 let test = Test.of_case
 let group = Group.of_tests
+let suite = Suite.mk
 
 let run
-      ?group_name_formatter
-      ?output_formatter
-      ?status_formatter
-      ?(ounit_test_runner=default_ounit_test_runner)
-      ?output
-      ?visibility
-      ?stdout_visibility
-      ?extra_data
-      suite =
-  let suite =
-    Suite.mk
-      ?output
-      ?visibility
-      ?stdout_visibility
-      ?extra_data
-      suite
-  in
+    ?group_name_formatter
+    ?output_formatter
+    ?status_formatter
+    ?(ounit_test_runner=default_ounit_test_runner)
+    suite =
   if Array.exists ((=) "-ounit") Sys.argv
   then
     ignore
@@ -167,9 +160,3 @@ let check_sub_ref
     ?hint
     ?name
     test_fun
-
-
-
-(* let check_list = assert false *)
-
-(* let check_list_ref = assert false *)

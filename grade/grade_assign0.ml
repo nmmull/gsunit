@@ -55,11 +55,12 @@ module Is_prime = struct
 end
 
 let () =
-  Gsunit.run
-    [
-      Sqrt.tests;
-      Is_prime.tests;
-    ]
+  [
+    Sqrt.tests;
+    Is_prime.tests;
+  ]
+  |> Gsunit.suite
+  |> Gsunit.run
 
 (* let grade_sqrt = *)
 (*   let test i = *)

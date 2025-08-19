@@ -1,6 +1,39 @@
-type ounit_results = (int list * [ `Passed | `Failed ]) list
+(* https://discuss.ocaml.org/t/rounding-floats-to-number-of-decimals/6921 *)
+let ceil3 x =
+  if x -. (Float.round x) = 0.
+  then x
+  else
+    floor (x *. 1000. +. 1.0) /. 1000.
 
-type ounit_test_runner = OUnitTest.(test -> result_list)
+let floor3 x =
+  if x -. (Float.round x) = 0.
+  then x
+  else
+    floor (x *. 1000.) /. 1000.
+
+let hidden_name = "<hidden>"
+
+module type WITH_META = sig
+  type meta
+  type 'a t
+
+  val mk : meta -> 'a -> 'a t
+  val meta : 'a t -> meta
+  val value : 'a t -> 'a
+  val map : ('a -> 'b) -> 'a t -> 'b t
+end
+
+module With_meta (M : sig type t end) = struct
+  type 'a t = M.t * 'a
+
+  let mk m a = (m, a)
+  let meta (m, _) = m
+  let value (_, a) = a
+  let map f (m, a) = (m, f a)
+end
+
+type ounit_results = (int list * [ `Passed | `Failed ]) list
+type ounit_test_runner = ?debug:bool -> unit -> OUnitTest.test -> OUnitTest.result_list
 
 let default_ounit_test_runner ?(debug=false) () =
   let conf = OUnitConf.default () in
@@ -99,43 +132,9 @@ let simple_format s = (s, `Simple_format)
 let md s = (s, `Md)
 let ansi s = (s, `Ansi)
 
-module type WITH_META = sig
-  type meta
-  type 'a t
-
-  val mk : meta -> 'a -> 'a t
-  val meta : 'a t -> meta
-  val value : 'a t -> 'a
-  val map : ('a -> 'b) -> 'a t -> 'b t
-end
-
-module With_meta (M : sig type t end) = struct
-  type 'a t = M.t * 'a
-
-  let mk m a = (m, a)
-  let meta (m, _) = m
-  let value (_, a) = a
-  let map f (m, a) = (m, f a)
-end
-
-(* https://discuss.ocaml.org/t/rounding-floats-to-number-of-decimals/6921 *)
-let ceil3 x =
-  if x -. (Float.round x) = 0.
-  then x
-  else
-    floor (x *. 1000. +. 1.0) /. 1000.
-
-let floor3 x =
-  if x -. (Float.round x) = 0.
-  then x
-  else
-    floor (x *. 1000.) /. 1000.
-
 type group_name_formatter = formatted_string -> formatted_string
 
 let default_group_name_formatter group_name_str name =
   match format name, group_name_str with
   | `Text, Some group_name_str -> text ("[" ^ group_name_str ^ "] " ^ str name)
   | _ -> name
-
-let hidden_name = "<hidden>"
