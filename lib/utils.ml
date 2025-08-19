@@ -134,6 +134,8 @@ let floor3 x =
 type group_name_formatter = formatted_string -> formatted_string
 
 let default_group_name_formatter group_name_str name =
-  match format name with
-  | `Text -> text ("[" ^ group_name_str ^ "] " ^ str name)
+  match format name, group_name_str with
+  | `Text, Some group_name_str -> text ("[" ^ group_name_str ^ "] " ^ str name)
   | _ -> name
+
+let hidden_name = "<hidden>"

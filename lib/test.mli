@@ -10,7 +10,7 @@ end
 include META with type t := Meta.t
 include WITH_META with type meta := Meta.t
 
-val name' : Meta.t -> string
+val name_default : Meta.t -> string
 
 type case =
   [ `Single of OUnitTest.test_fun
@@ -40,7 +40,7 @@ val default_status_formatter : status_formatter
 val to_gradescope :
   ?output_formatter:output_formatter ->
   ?status_formatter:status_formatter ->
+  ?default_max_score:float ->
   group_name_formatter:group_name_formatter ->
-  default_max_score:float ->
   result ->
   Gradescope.Test.t

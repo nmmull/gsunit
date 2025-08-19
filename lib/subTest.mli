@@ -10,7 +10,7 @@ end
 include META with type t := Meta.t
 include WITH_META with type meta := Meta.t
 
-val name' : Meta.t -> string
+val name_default : Meta.t -> string
 
 type test = OUnitTest.test_fun t
 type result = [ `Passed | `Failed ] t

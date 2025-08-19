@@ -27,7 +27,7 @@ end
 include (Meta : META with type t := Meta.t)
 include With_meta (Meta)
 
-let name' m = Option.value (m |> name) ~default:"[unnamed subtest]"
+let name_default m = Option.value (m |> name) ~default:Utils.hidden_name
 
 let mk
       ?name
@@ -55,4 +55,4 @@ let to_ounit_test t =
   let open OUnit2 in
   let length = OUnitTest.Custom_length (t |> meta |> length) in
   let test_case = test_case ~length (value t) in
-  (t |> meta |> name') >: test_case
+  (t |> meta |> name_default) >: test_case

@@ -59,46 +59,117 @@ let run
            gradescope_results)
 
 let check
-      ?test_name
+      ?name
       ?hint
       ?hidden
-      ~in_printer
-      ~out_printer
+      ~pp_in
+      ~pp_out
       fn
       fn_name
       input
       expected =
-  let name =
-    match test_name with
-    | Some name -> name
-    | None ->
-      (* TODO: FORMAT *)
-      Printf.sprintf
-        "%s %s = %s"
-        fn_name
-        (in_printer input)
-        (out_printer expected)
-  in
   let test_fun _ =
     let actual = fn input in
     let msg =
-      (* TODO: FORMAT *)
-      Printf.sprintf
-        "function: %s\ninput: %s\nexpected: %s\nactual: %s"
+      Format.asprintf
+        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
         fn_name
-        (in_printer input)
-        (out_printer expected)
-        (out_printer actual)
+        pp_in input
+        pp_out expected
+        pp_out actual
     in OUnit2.assert_equal ~msg expected actual
   in
   test
     ?hidden
     ?hint
-    ~name
+    ?name
     (`Single test_fun)
 
-let check_ref = assert false
+let check_ref
+    ?name
+    ?hint
+    ?hidden
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    fn_ref
+    input =
+  let test_fun _ =
+    let expected = fn_ref input in
+    let actual = fn input in
+    let msg =
+      Format.asprintf
+        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
+        fn_name
+        pp_in input
+        pp_out expected
+        pp_out actual
+    in OUnit2.assert_equal ~msg expected actual
+  in
+  test
+    ?hidden
+    ?hint
+    ?name
+    (`Single test_fun)
 
-let check_list = assert false
+let check_sub
+    ?name
+    ?hint
+    ?hidden
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    input
+    expected =
+  let test_fun _ =
+      let actual = fn input in
+      let msg =
+        Format.asprintf
+          "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
+          fn_name
+          pp_in input
+          pp_out expected
+          pp_out actual
+      in OUnit2.assert_equal ~msg expected actual
+  in
+  subtest
+    ?name
+    ?hint
+    ?hidden
+    test_fun
 
-let check_list_ref = assert false
+let check_sub_ref
+    ?name
+    ?hint
+    ?hidden
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    fn_ref
+    input =
+  let test_fun _ =
+    let expected = fn_ref input in
+    let actual = fn input in
+    let msg =
+      Format.asprintf
+        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
+        fn_name
+        pp_in input
+        pp_out expected
+        pp_out actual
+    in OUnit2.assert_equal ~msg expected actual
+  in
+  subtest
+    ?hidden
+    ?hint
+    ?name
+    test_fun
+
+
+
+(* let check_list = assert false *)
+
+(* let check_list_ref = assert false *)

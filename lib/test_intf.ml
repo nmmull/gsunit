@@ -11,6 +11,7 @@ type 'a with_options =
   ?visibility:visibility ->
   ?tags:string list ->
   ?extra_data: Yojson.Basic.t ->
+  ?result_formatter: (SubTest.result list -> formatted_string option) ->
   ?name_format:output_string_format ->
   ?name:string ->
   'a
@@ -29,6 +30,7 @@ module type META = sig
   val extra_data : t -> Yojson.Basic.t option
   val hint : t -> string option
   val hidden : t -> bool
+  val result_formatter : t -> (SubTest.result list -> formatted_string option) option
 end
 
 module type Intf = sig
