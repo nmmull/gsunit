@@ -213,7 +213,7 @@ let default_output_formatter test_results =
       then Utils.hidden_name
       else Option.value (r |> meta |> hint) ~default:(r |> meta |> name_default)
     in
-    let failed_list =
+    let result_list =
       test_results
       |> value
       |> List.mapi (fun i r -> (i, subtest_label r, failed r))
@@ -225,18 +225,9 @@ let default_output_formatter test_results =
             label
         )
     in
-    let output_str =
-      let lines =
-        [
-          "-------";
-          "Results";
-          "-------";
-          "";
-        ] @ failed_list
-      in
-      String.concat "\n" lines
+    let output_str = String.concat "\n" result_list
     in
-    if List.length failed_list = 0
+    if List.length result_list = 0
     then None
     else Some (text output_str)
 
