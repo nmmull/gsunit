@@ -11,8 +11,6 @@ let floor3 x =
   else
     floor (x *. 1000.) /. 1000.
 
-let hidden_name = "(hidden)"
-
 module type WITH_META = sig
   type meta
   type 'a t
@@ -132,9 +130,14 @@ let simple_format s = (s, `Simple_format)
 let md s = (s, `Md)
 let ansi s = (s, `Ansi)
 
-type group_name_formatter = string option -> formatted_string -> formatted_string
+type group_name_formatter = string option -> formatted_string option -> formatted_string option
 
 let default_group_name_formatter group_name_str name =
-  match format name, group_name_str with
-  | `Text, Some group_name_str -> text ("[" ^ group_name_str ^ "] " ^ str name)
-  | _ -> name
+  match group_name_str, name with
+  | None, None -> None
+  | Some group_name_str, None -> Some (text ("[" ^ group_name_str ^ "]"))
+  | None, Some name -> Some name
+  | Some group_name_str, Some name ->
+    match format name with
+    | `Text -> Some (text ("[" ^ group_name_str ^ "] " ^ str name))
+    | _ -> Some name

@@ -2,8 +2,6 @@ open Utils
 
 type 'a with_options =
   ?max_score:float ->
-  ?hint:string ->
-  ?hidden:bool ->
   ?number:string ->
   ?output:string ->
   ?output_format:output_string_format ->
@@ -28,8 +26,6 @@ module type META = sig
   val tags : t -> string list option
   val visibility : t -> visibility
   val extra_data : t -> Yojson.Basic.t option
-  val hint : t -> string option
-  val hidden : t -> bool
   val result_formatter : t -> SubTest.result_formatter option
 end
 

@@ -26,21 +26,17 @@ type output_string_format =
 
 type formatted_string = string * output_string_format
 
-type group_name_formatter = string option -> formatted_string -> formatted_string
+type group_name_formatter = string option -> formatted_string option -> formatted_string option
 
 type ounit_test_runner = ?debug:bool -> unit -> OUnitTest.test -> OUnitTest.result_list
 
 val subtest :
   ?name:string ->
-  ?hint:string ->
   ?length:float ->
-  ?hidden:bool ->
   OUnitTest.test_fun -> SubTest.test
 
 val test :
   ?max_score:float ->
-  ?hint:string ->
-  ?hidden:bool ->
   ?number:string ->
   ?output:string ->
   ?output_format:output_string_format ->
@@ -68,8 +64,6 @@ val suite :
 
 val check:
   ?name:string ->
-  ?hint:string ->
-  ?hidden:bool ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
@@ -78,8 +72,6 @@ val check:
 
 val check_ref:
   ?name:string ->
-  ?hint:string ->
-  ?hidden:bool ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
@@ -89,8 +81,6 @@ val check_ref:
 
 val check_sub:
   ?name:string ->
-  ?hint:string ->
-  ?hidden:bool ->
   pp_in:'a Fmt.t ->
   pp_out: 'b Fmt.t ->
   ('a -> 'b) ->
@@ -99,8 +89,6 @@ val check_sub:
 
 val check_sub_ref:
   ?name:string ->
-  ?hint:string ->
-  ?hidden:bool ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
@@ -109,7 +97,7 @@ val check_sub_ref:
   'a -> SubTest.test
 
 val run :
-  ?group_name_formatter:(string option -> formatted_string -> formatted_string) ->
+  ?group_name_formatter:group_name_formatter ->
   ?output_formatter:Test.output_formatter ->
   ?status_formatter:Test.status_formatter ->
   ?ounit_test_runner:ounit_test_runner ->

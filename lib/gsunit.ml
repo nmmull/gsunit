@@ -49,8 +49,6 @@ let run
 
 let check
       ?name
-      ?hint
-      ?hidden
       ~pp_in
       ~pp_out
       fn
@@ -69,15 +67,11 @@ let check
     in OUnit2.assert_equal ~msg expected actual
   in
   test
-    ?hidden
-    ?hint
     ?name
     (`Single test_fun)
 
 let check_ref
     ?name
-    ?hint
-    ?hidden
     ~pp_in
     ~pp_out
     fn
@@ -97,15 +91,11 @@ let check_ref
     in OUnit2.assert_equal ~msg expected actual
   in
   test
-    ?hidden
-    ?hint
     ?name
     (`Single test_fun)
 
 let check_sub
     ?name
-    ?hint
-    ?hidden
     ~pp_in
     ~pp_out
     fn
@@ -125,14 +115,10 @@ let check_sub
   in
   subtest
     ?name
-    ?hint
-    ?hidden
     test_fun
 
 let check_sub_ref
     ?name
-    ?hint
-    ?hidden
     ~pp_in
     ~pp_out
     fn
@@ -152,7 +138,5 @@ let check_sub_ref
     in OUnit2.assert_equal ~msg expected actual
   in
   subtest
-    ?hidden
-    ?hint
     ?name
     test_fun

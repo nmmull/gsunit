@@ -7,8 +7,6 @@ module Meta = struct
       max_score: float option;
       name: string option;
       name_format: output_string_format;
-      hint: string option;
-      hidden: bool;
       number: string option;
       output: string option;
       output_format: output_string_format;
@@ -21,8 +19,6 @@ module Meta = struct
 
   let mk
         ?max_score
-        ?hint
-        ?(hidden=false)
         ?number
         ?output
         ?(output_format=`Text)
@@ -38,8 +34,6 @@ module Meta = struct
       max_score;
       name;
       name_format;
-      hint;
-      hidden;
       number;
       output;
       output_format;
@@ -60,23 +54,19 @@ module Meta = struct
   let tags t = t.tags
   let visibility t = t.visibility
   let extra_data t = t.extra_data
-  let hint t = t.hint
-  let hidden t = t.hidden
   let result_formatter t = t.result_formatter
 end
 
 include (Meta : META with type t := Meta.t)
 include With_meta (Meta)
 
-let name_default m = Option.value (m |> name) ~default:Utils.hidden_name
+let name' m = Option.value (m |> name) ~default:"[unnamed test]"
 
 type test = SubTest.test list t
 type result = SubTest.result list t
 
 let mk
       ?max_score
-      ?hint
-      ?hidden
       ?number
       ?output
       ?output_format
@@ -88,9 +78,7 @@ let mk
       ?name_format
       ?name =
   mk (Meta.mk
-        ?hidden
         ?max_score
-        ?hint
         ?number
         ?output
         ?output_format
@@ -110,8 +98,6 @@ type case =
 
 let of_case
       ?max_score
-      ?hint
-      ?hidden
       ?number
       ?output
       ?output_format
@@ -129,9 +115,7 @@ let of_case
     | `Multi subtests -> subtests
   in
   mk
-    ?hidden
     ?max_score
-    ?hint
     ?number
     ?output
     ?output_format
@@ -146,8 +130,6 @@ let of_case
 
 let update_meta
       ?max_score
-      ?hint
-      ?hidden
       ?number
       ?output
       ?output_format
@@ -167,8 +149,6 @@ let update_meta
   in
   mk
     ?max_score:(get max_score (m |> Meta.max_score))
-    ?hint:(get hint (m |> Meta.hint))
-    ?hidden:(get hidden (Some (m |> Meta.hidden)))
     ?number:(get number (m |> Meta.number))
     ?output:(get output (m |> Meta.output))
     ?output_format:(get output_format (Some (m |> Meta.output_format)))
@@ -186,7 +166,7 @@ let to_ounit_test t =
   let sub_tests = value t in
   sub_tests
   |> List.map SubTest.to_ounit_test
-  |> (>:::) (t |> meta |> name_default)
+  |> (>:::) (t |> meta |> name')
 
 let test_to_result ounit_results =
   map
@@ -198,8 +178,11 @@ let test_to_result ounit_results =
 
 type output_formatter = result -> formatted_string option
 
-let default_output_formatter test_results =
-  if test_results |> value |> List.length |> ((=) 1)
+let default_output_formatter : output_formatter = fun test_results ->
+  if test_results
+     |> value
+     |> List.length
+     |> (fun l -> l <= 1)
   then None
   else
     let failed r =
@@ -209,27 +192,27 @@ let default_output_formatter test_results =
     in
     let subtest_label r =
       let open SubTest in
-      if r |> meta |> hidden
-      then Utils.hidden_name
-      else Option.value (r |> meta |> hint) ~default:(r |> meta |> name_default)
+      r |> meta |> name
     in
     let result_list =
       test_results
       |> value
       |> List.mapi (fun i r -> (i, subtest_label r, failed r))
       |> List.map (fun (i, label, failed) ->
+          let label =
+            match label with
+            | Some label -> " " ^ label
+            | None -> ""
+          in
           Printf.sprintf
-            "%d. %s %s"
+            "%d. %s%s"
             (i + 1)
             (if failed then "FAILED" else "PASSED")
             label
         )
     in
-    let output_str = String.concat "\n" result_list
-    in
-    if List.length result_list = 0
-    then None
-    else Some (text output_str)
+    let output_str = String.concat "\n" result_list in
+    Some (text output_str)
 
 type status_formatter = result -> status option
 
@@ -286,15 +269,9 @@ let to_gradescope
   in
   let formatted_name =
     let formatted_name =
-      if (t |> meta |> hidden)
-      then text Utils.hidden_name
-      else
-        match t |> meta |> hint with
-        | Some hint -> text hint
-        | None ->
-           match t |> meta |> name with
-           | None -> text (t |> meta |> name_default)
-           | Some name -> format_str name (t |> meta |> name_format)
+      Option.map
+        (fun n -> format_str n (t |> meta |> name_format))
+        (t |> meta |> name)
     in group_name_formatter formatted_name
   in
   Gradescope.Test.mk
@@ -305,8 +282,8 @@ let to_gradescope
     ?tags:(t |> meta |> tags)
     ?extra_data:(t |> meta |> extra_data)
     ?number:(t |> meta |> number)
-    ?name_format:(format formatted_name |> opt_of_format)
+    ?name_format:(Option.(bind (map format formatted_name) opt_of_format))
     ?max_score
     ?score
-    ~name:(str formatted_name)
+    ?name:(Option.map str formatted_name)
     ()
