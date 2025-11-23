@@ -48,13 +48,14 @@ let run
            gradescope_results)
 
 let check
-      ?name
-      ~pp_in
-      ~pp_out
-      fn
-      fn_name
-      input
-      expected =
+    ?name
+    ?cmp
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    input
+    expected =
   let test_fun _ =
     let actual = fn input in
     let msg =
@@ -64,7 +65,7 @@ let check
         pp_in input
         pp_out expected
         pp_out actual
-    in OUnit2.assert_equal ~msg expected actual
+    in OUnit2.assert_equal ~msg ?cmp expected actual
   in
   test
     ?name

@@ -64,6 +64,7 @@ val suite :
 
 val check:
   ?name:string ->
+  ?cmp:('b -> 'b -> bool) ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
