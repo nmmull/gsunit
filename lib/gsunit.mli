@@ -30,6 +30,9 @@ type group_name_formatter = string option -> formatted_string option -> formatte
 
 type ounit_test_runner = ?debug:bool -> unit -> OUnitTest.test -> OUnitTest.result_list
 
+val default_ounit_test_runner : ounit_test_runner
+val sequential_ounit_test_runner : ounit_test_runner
+
 val subtest :
   ?name:string ->
   ?length:float ->

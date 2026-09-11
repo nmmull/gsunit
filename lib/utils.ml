@@ -43,6 +43,15 @@ let default_ounit_test_runner ?(debug=false) () =
   let chooser = OUnitChooser.of_name "simple" in
   OUnitCore.run_test_tt conf logger runner chooser
 
+let sequential_ounit_test_runner ?(debug=false) () =
+  let conf = OUnitConf.default () in
+  let logger =
+    if debug
+    then OUnitLoggerStd.create conf OUnitLogger.shard_default
+    else OUnitLogger.null_logger in
+  let chooser = OUnitChooser.of_name "simple" in
+  OUnitCore.run_test_tt conf logger OUnitRunner.sequential_runner chooser
+
 let reformat_ounit_results results =
   let reformat_path =
     let rec go acc = function
