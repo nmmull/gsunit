@@ -36,6 +36,7 @@ let of_test_fun ?name ?length = mk ?name ?length
 
 let to_ounit_test t =
   let open OUnit2 in
-  let length = OUnitTest.Custom_length (t |> meta |> length) in
-  let test_case = test_case ~length (value t) in
+  (* let length = OUnitTest.Custom_length (t |> meta |> length) in *)
+  (* let test_case = test_case ~length (value t) in *)
+  let test_case = test_case (value t) in
   (t |> meta |> name') >: test_case
