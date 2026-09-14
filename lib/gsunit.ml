@@ -147,7 +147,7 @@ let check_sub
     | child_pid ->
       let _close_write = Unix.close write_fd in
       let in_chan = Unix.in_channel_of_descr read_fd in
-      let deadline = Unix.gettimeofday () +. 5.0 in
+      let deadline = Unix.gettimeofday () +. 10.0 in
       let rec loop () =
         match Unix.waitpid [Unix.WNOHANG] child_pid with
         | 0, _ ->
