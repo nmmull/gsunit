@@ -85,6 +85,7 @@ val check_ref:
 
 val check_sub:
   ?name:string ->
+  ?timeout:float ->
   pp_in:'a Fmt.t ->
   pp_out: 'b Fmt.t ->
   ('a -> 'b) ->
