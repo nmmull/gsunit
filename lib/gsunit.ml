@@ -145,21 +145,12 @@ let check_sub
           pp_out expected
           pp_out actual
       in OUnit2.assert_equal ~msg expected actual
-    | Some timeout -> fun _ ->
-      let read_p, write_p = Unix.pipe () in
+    | Some timeout -> fun _ -> (* silly, but works for now I think? *)
       match Unix.fork () with
       | 0 ->
-        let _close_read = Unix.close read_p in
-        let out_chan = Unix.out_channel_of_descr write_p in
-        let _calculate_actual =
-          match Marshal.to_channel out_chan (fn input) [] with
-          | _ -> flush out_chan
-          | exception _ -> ()
-        in
+        let _actual = fn input in
         Unix._exit 0
       | child_pid ->
-        let _close_write = Unix.close write_p in
-        let in_chan = Unix.in_channel_of_descr read_p in
         let deadline = Unix.gettimeofday () +. timeout in
         let rec loop () =
           match Unix.waitpid [Unix.WNOHANG] child_pid with
@@ -167,13 +158,13 @@ let check_sub
             if Unix.gettimeofday () > deadline
             then
               let _kill = try Unix.kill child_pid Sys.sigkill with _ -> () in
-              let _dunno = Unix.waitpid [] child_pid in
+              let _reap = Unix.waitpid [] child_pid in
               OUnit2.assert_failure "Timed out"
             else
               let _sleep = Unix.sleepf 0.05 in
               loop ()
           | _, Unix.WEXITED 0 ->
-            let actual = Marshal.from_channel in_chan in
+            let actual = fn input in
             let msg =
               Format.asprintf
                 "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
