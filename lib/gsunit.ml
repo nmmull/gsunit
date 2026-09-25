@@ -47,8 +47,8 @@ let run
            out_channel
            gradescope_results)
 
-let check
-    ?name
+let test_fun
+    ?timeout
     ?cmp
     ~pp_in
     ~pp_out
@@ -56,35 +56,37 @@ let check
     fn_name
     input
     expected =
-  let test_fun _ =
-    let read_fd, write_fd = Unix.pipe () in
+  match timeout with
+  | None -> fun _ ->
+    let actual = fn input in
+    let msg =
+      Format.asprintf
+        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
+        fn_name
+        pp_in input
+        pp_out expected
+        pp_out actual
+    in OUnit2.assert_equal ?cmp ~msg expected actual
+  | Some timeout -> fun _ -> (* silly, but works for now I think? *)
     match Unix.fork () with
     | 0 ->
-      let _close_read = Unix.close read_fd in
-      let out_chan = Unix.out_channel_of_descr write_fd in
-      let _calculate_actual =
-        match Marshal.to_channel out_chan (fn input) [] with
-        | _ -> flush out_chan
-        | exception _ -> ()
-      in
+      let _actual = fn input in
       Unix._exit 0
     | child_pid ->
-      let _close_write = Unix.close write_fd in
-      let in_chan = Unix.in_channel_of_descr read_fd in
-      let deadline = Unix.gettimeofday () +. 5.0 in
+      let deadline = Unix.gettimeofday () +. timeout in
       let rec loop () =
         match Unix.waitpid [Unix.WNOHANG] child_pid with
         | 0, _ ->
           if Unix.gettimeofday () > deadline
           then
             let _kill = try Unix.kill child_pid Sys.sigkill with _ -> () in
-            let _dunno = Unix.waitpid [] child_pid in
+            let _reap = Unix.waitpid [] child_pid in
             OUnit2.assert_failure "Timed out"
           else
             let _sleep = Unix.sleepf 0.05 in
             loop ()
         | _, Unix.WEXITED 0 ->
-          let actual = Marshal.from_channel in_chan in
+          let actual = fn input in
           let msg =
             Format.asprintf
               "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
@@ -92,41 +94,14 @@ let check
               pp_in input
               pp_out expected
               pp_out actual
-          in OUnit2.assert_equal ~msg ?cmp expected actual
+          in OUnit2.assert_equal ?cmp ~msg expected actual
         | _ -> OUnit2.assert_failure "Something went wrong"
       in loop ()
-  in
-  test
-    ?name
-    (`Single test_fun)
 
-let check_ref
-    ?name
-    ~pp_in
-    ~pp_out
-    fn
-    fn_name
-    fn_ref
-    input =
-  let test_fun _ =
-    let expected = fn_ref input in
-    let actual = fn input in
-    let msg =
-      Format.asprintf
-        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
-        fn_name
-        pp_in input
-        pp_out expected
-        pp_out actual
-    in OUnit2.assert_equal ~msg expected actual
-  in
-  test
-    ?name
-    (`Single test_fun)
-
-let check_sub
+let check
     ?name
     ?timeout
+    ?cmp
     ~pp_in
     ~pp_out
     fn
@@ -134,72 +109,81 @@ let check_sub
     input
     expected =
   let test_fun =
-    match timeout with
-    | None -> fun _ ->
-      let actual = fn input in
-      let msg =
-        Format.asprintf
-          "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
-          fn_name
-          pp_in input
-          pp_out expected
-          pp_out actual
-      in OUnit2.assert_equal ~msg expected actual
-    | Some timeout -> fun _ -> (* silly, but works for now I think? *)
-      match Unix.fork () with
-      | 0 ->
-        let _actual = fn input in
-        Unix._exit 0
-      | child_pid ->
-        let deadline = Unix.gettimeofday () +. timeout in
-        let rec loop () =
-          match Unix.waitpid [Unix.WNOHANG] child_pid with
-          | 0, _ ->
-            if Unix.gettimeofday () > deadline
-            then
-              let _kill = try Unix.kill child_pid Sys.sigkill with _ -> () in
-              let _reap = Unix.waitpid [] child_pid in
-              OUnit2.assert_failure "Timed out"
-            else
-              let _sleep = Unix.sleepf 0.05 in
-              loop ()
-          | _, Unix.WEXITED 0 ->
-            let actual = fn input in
-            let msg =
-              Format.asprintf
-                "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
-                fn_name
-                pp_in input
-                pp_out expected
-                pp_out actual
-            in OUnit2.assert_equal ~msg expected actual
-          | _ -> OUnit2.assert_failure "Something went wrong"
-        in loop ()
-  in
-  subtest
-    ?name
     test_fun
+      ?timeout
+      ?cmp
+      ~pp_in
+      ~pp_out
+      fn
+      fn_name
+      input
+      expected
+  in test ?name (`Single test_fun)
 
-let check_sub_ref
+let check_ref
     ?name
+    ?timeout
+    ?cmp
     ~pp_in
     ~pp_out
     fn
     fn_name
     fn_ref
     input =
-  let test_fun _ =
+  let test_fun =
     let expected = fn_ref input in
-    let actual = fn input in
-    let msg =
-      Format.asprintf
-        "function: %s@.input:@[<hv>@;<1 2>%a@]@.expected:@[<hv>@;<1 2>%a@]@.actual:@[<hv>@;<1 2>%a@]@."
-        fn_name
-        pp_in input
-        pp_out expected
-        pp_out actual
-    in OUnit2.assert_equal ~msg expected actual
-  in
-  subtest
-    ?name
     test_fun
+      ?timeout
+      ?cmp
+      ~pp_in
+      ~pp_out
+      fn
+      fn_name
+      input
+      expected
+  in test ?name (`Single test_fun)
+
+let check_sub
+    ?name
+    ?timeout
+    ?cmp
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    input
+    expected =
+  let test_fun =
+    test_fun
+      ?timeout
+      ?cmp
+      ~pp_in
+      ~pp_out
+      fn
+      fn_name
+      input
+      expected
+  in subtest ?name test_fun
+
+let check_sub_ref
+    ?name
+    ?timeout
+    ?cmp
+    ~pp_in
+    ~pp_out
+    fn
+    fn_name
+    fn_ref
+    input =
+  let test_fun =
+    let expected = fn_ref input in
+    test_fun
+      ?timeout
+      ?cmp
+      ~pp_in
+      ~pp_out
+      fn
+      fn_name
+      input
+      expected
+  in subtest ?name test_fun

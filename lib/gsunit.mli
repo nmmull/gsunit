@@ -35,7 +35,6 @@ val sequential_ounit_test_runner : ounit_test_runner
 
 val subtest :
   ?name:string ->
-  ?length:float ->
   OUnitTest.test_fun -> SubTest.test
 
 val test :
@@ -67,6 +66,7 @@ val suite :
 
 val check:
   ?name:string ->
+  ?timeout:float ->
   ?cmp:('b -> 'b -> bool) ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
@@ -76,6 +76,8 @@ val check:
 
 val check_ref:
   ?name:string ->
+  ?timeout:float ->
+  ?cmp:('b -> 'b -> bool) ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
@@ -86,6 +88,7 @@ val check_ref:
 val check_sub:
   ?name:string ->
   ?timeout:float ->
+  ?cmp:('b -> 'b -> bool) ->
   pp_in:'a Fmt.t ->
   pp_out: 'b Fmt.t ->
   ('a -> 'b) ->
@@ -94,6 +97,8 @@ val check_sub:
 
 val check_sub_ref:
   ?name:string ->
+  ?timeout:float ->
+  ?cmp:('b -> 'b -> bool) ->
   pp_in:'a Fmt.t ->
   pp_out:'b Fmt.t ->
   ('a -> 'b) ->
